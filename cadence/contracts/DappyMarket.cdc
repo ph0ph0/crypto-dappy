@@ -4,6 +4,7 @@ import FungibleToken from "./FungibleToken.cdc"
 // DappyMarket
 //
 // A sale support contract for Dappies, based on the NFTStorefront contract (https://github.com/onflow/nft-storefront).
+// For another example of a modified NFTStorefront contract, see (https://github.com/versus-flow/versus-contracts/blob/main/contracts/Marketplace.cdc)
 // 
 // Each account that wants to list Dappies for sale installs a Storefront,
 // and lists individual sales within that Storefront as Listings.
