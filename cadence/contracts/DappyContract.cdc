@@ -7,14 +7,6 @@ pub contract DappyContract {
   access(self) var templates: {UInt32: Template}
   access(self) var families: @{UInt32: Family}
 
-  // TODO: Remove and move over to DappyMarket
-  pub event ListingAvailable(
-        uuid: UInt64,
-        address: Address,
-        dna: String,
-        name: String
-    )
-  
   pub var nextTemplateID: UInt32
   pub var nextFamilyID: UInt32
   pub var totalDappies: UInt64
@@ -110,7 +102,7 @@ pub contract DappyContract {
       self.name = name
       self.familyID = familyID
       self.templates = []
-      self.lazy = {}
+      self.lazy = {}  
       self.price = price
     }
   }
@@ -317,14 +309,15 @@ pub contract DappyContract {
     return el.templates.contains(templateID)
   }
 
+  // TODO: Change the paths back!
   init() {
     self.templates = {}
     self.totalDappies = 0
     self.nextTemplateID = 1
     self.nextFamilyID = 1
-    self.CollectionStoragePath = /storage/DappyCollection
-    self.CollectionPublicPath = /public/DappyCollectionPublic
-    self.AdminStoragePath = /storage/DappyAdmin
+    self.CollectionStoragePath = /storage/DappyCollection_X
+    self.CollectionPublicPath = /public/DappyCollectionPublic_X
+    self.AdminStoragePath = /storage/DappyAdmin_X
     self.account.save<@Admin>(<- create Admin(), to: self.AdminStoragePath)
     self.families <- {}
   }
