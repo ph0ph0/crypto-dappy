@@ -12,4 +12,3 @@ transaction(dna: String, name: String) {
     self.adminRef.createTemplate(dna: dna, name: name)
   }
 }
- 

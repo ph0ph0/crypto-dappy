@@ -1,9 +1,19 @@
 
-import FungibleToken from "./FungibleToken.cdc"
+// TODO: Switch back to relative path before PR:
+// import FungibleToken from "./FungibleToken.cdc"
+import FungibleToken from 0x9a0766d93b6608b7
 
 pub contract DappyContract {
   access(self) var templates: {UInt32: Template}
   access(self) var families: @{UInt32: Family}
+
+  // TODO: Remove and move over to DappyMarket
+  pub event ListingAvailable(
+        uuid: UInt64,
+        address: Address,
+        dna: String,
+        name: String
+    )
   
   pub var nextTemplateID: UInt32
   pub var nextFamilyID: UInt32
@@ -23,7 +33,7 @@ pub contract DappyContract {
       self.templateID = templateID
       self.dna = dna
       self.name = name
-      self.price = self._calculatePrice(dna: dna.length)
+      self.price = 0.5
     }
 
     access(self) fun _calculatePrice(dna: Int): UFix64 {
@@ -49,6 +59,12 @@ pub contract DappyContract {
       DappyContract.totalDappies = DappyContract.totalDappies + 1
       self.id = DappyContract.totalDappies
       self.data = Template(templateID: templateID, dna: dappy.dna, name: dappy.name)
+      emit ListingAvailable(
+        uuid: self.uuid,
+        address: 0x29e893174dd9b963,
+        dna: self.data.dna,
+        name: self.data.name
+    )
     }
   }
 
