@@ -59,12 +59,6 @@ pub contract DappyContract {
       DappyContract.totalDappies = DappyContract.totalDappies + 1
       self.id = DappyContract.totalDappies
       self.data = Template(templateID: templateID, dna: dappy.dna, name: dappy.name)
-      emit ListingAvailable(
-        uuid: self.uuid,
-        address: 0x29e893174dd9b963,
-        dna: self.data.dna,
-        name: self.data.name
-    )
     }
   }
 
