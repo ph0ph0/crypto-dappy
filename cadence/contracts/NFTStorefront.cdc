@@ -453,10 +453,12 @@ pub contract NFTStorefront {
         pub fun cleanup(listingResourceID: UInt64) {
             pre {
                 self.listings[listingResourceID] != nil: "could not find listing with given id"
+                self.dappyIDs
             }
 
             let listing <- self.listings.remove(key: listingResourceID)!
             assert(listing.getDetails().purchased == true, message: "listing is not purchased, only admin can remove")
+            // This will emit a Listing completed event
             destroy listing
         }
 

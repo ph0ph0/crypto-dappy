@@ -1,6 +1,5 @@
 // NOTE: Add to tutorial
 
-
 import DappyMarket from 0x29e893174dd9b963
 import DappyContract from 0x29e893174dd9b963
 import FUSD from 0xe223d8a629e49c68
@@ -26,14 +25,22 @@ transaction(id: UInt64, name: String, dna: String, price: UFix64) {
         }
 
         // Set our reference and capabilities
-        self.storefrontRef = acct.borrow<&DappyMarket.Storefront{DappyMarket.StorefrontManager}>(from: DappyMarket.StorefrontStoragePath) ?? panic("Couldn't borrow storefront reference from account")
+        self.storefrontRef = acct.borrow<&DappyMarket.Storefront{DappyMarket.StorefrontManager}>(from: DappyMarket.StorefrontStoragePath) 
+            ?? panic("Couldn't borrow storefront reference from account")
         self.dappyProviderCap = acct.getCapability<&{DappyContract.CollectionPublic, DappyContract.Provider}>(DappyContract.CollectionPublicPath)
         self.fusdVaultCap = acct.getCapability<&FUSD.Vault{FungibleToken.Receiver}>(/public/fusdReceiver)
     }
 
     execute {
         let saleCuts: [DappyMarket.SaleCut] = [DappyMarket.SaleCut(receiver: self.fusdVaultCap, amount: price)]
-        self.storefrontRef.createListing(dappyProviderCapability: self.dappyProviderCap, dappyID: id, name: name, dna: dna, salePaymentVaultType: self.fusdVaultCap.getType(), saleCuts: saleCuts)
+        self.storefrontRef.createListing(
+            dappyProviderCapability: self.dappyProviderCap, 
+            dappyID: id, 
+            name: name, 
+            dna: dna, 
+            salePaymentVaultType: self.fusdVaultCap.getType(), 
+            saleCuts: saleCuts
+            )
 
     }
 }

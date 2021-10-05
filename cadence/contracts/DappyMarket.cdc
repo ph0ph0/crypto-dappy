@@ -1,5 +1,5 @@
-import DappyContract from "./DappyContract.cdc"
-import FungibleToken from "./FungibleToken.cdc"
+import DappyContract from 0x29e893174dd9b963
+import FungibleToken from 0x9a0766d93b6608b7
 
 // DappyMarket
 //
@@ -32,9 +32,9 @@ import FungibleToken from "./FungibleToken.cdc"
 //   (https://github.com/onflow/flow-nft/blob/master/contracts/NonFungibleToken.cdc). 
 //   As such, it does not have access to the restricted types of the NFT standard contract,
 //   and so all restricted types had to be updated to the equivalent in the DappyContract.
-//   For example, in the NFTStorefront contract, on line 207, the `dappyProviderCapability` 
-//   constant has a restricted type of {DappyContract.Provider, DappyContract.CollectionPublic}.
-//   The equivalent in this contract is {DappyContract.Provider, DappyContract.CollectionPublic}.
+//   For example, in the NFTStorefront contract, on line 207, the `nftProviderCapability` 
+//   constant has a restricted type of {NonFungibleToken.Provider, NonFungibleToken.CollectionPublic}.
+//   The equivalent in the DappyMarket contract is {DappyContract.Provider, DappyContract.CollectionPublic}.
 // - Where approporiate, the term 'NFT' was replaced with 'Dappy'.
 // - The term 'Listing' was replaced with 'DappyListing'. This was to clarify that a Listing resource
 //   in the original NFTStorefront contract is not quite the same as a DappyListing (different properties).
@@ -46,16 +46,37 @@ import FungibleToken from "./FungibleToken.cdc"
 //        the type will always be DappyContract.Dappy.
 //      - nftProviderCapability changed to dappyProviderCapability, and the restricted types updated.
 //      - In the Listing resource of the NFTStorefront contract, there is a borrowNFT() method associated with
-//        the CollectionPublic interface in the NonFungibleToken standard. This is used to check that the user
-//        still owns the NFT in question. There is no equivalent method in the Dappy contract, however,
+//        the CollectionPublic and Provider interfaces in the NonFungibleToken standard (L213). This is used to check that the user
+//        still owns the NFT in question. It achieves this through calling the .borrowNFT() function defined 
+//        in the NonFungibleToken standard contract (L130). There is no equivalent method to borrowNFT in the Dappy contract, however,
 //        we can use the listDappies() method of the DappyContract CollectionPublic interface to achieve the 
-//        same outcome. Since we are not borrowing a reference to the Dappy (the listDappies() method returns a 
+//        same outcome (DappyContract, L191). Since we are not borrowing a reference to the Dappy (the listDappies() method returns a 
 //        {UInt64: DappyContract.Template} dictionary, so this is not possible anyway), the name of this method
 //         was changed to `ownsDappy()`. It returns a boolean that indicates if the account owns the Dappy. To 
-//        achieve the same effect, the getIDs() method of the DappyContract CollectionPublic could have also been
+//        achieve the same effect, the getIDs() method of the DappyContract CollectionPublic (L187) could have also been
 //        used. However, this returns an array, and dictionary lookup using the ID would be more efficient than
 //        iterating through an array of IDs. 
-//      - The assertion at the end of the DappyListing initialization function was updated to use listDappies().
+//      - The assertion at the end of the DappyListing initialization function was updated to use listDappies() (L380).
+// - Storefront resource/interfaces:
+//      - A dictionary mapping the DappyIDs to the ListingIDs called dappyIDsToListingIDs was added to the Storefront resource. This was necessary
+//        to prevent multiple Listings being created for the same Dappy. A getDappyIDs() function was added to the 
+//        StorefrontPublic interface and thus to the Storefront resource. Using these additions, it was now possible
+//        to check if a Dappy had already been listed. This was achieved in the precondition of the createListing()
+//        function in the Storefront resource. If the DappyID exists in the dappyIDsToListingIDs dictionary, then the
+//        function is aborted. A dappyID is added to the dictionary during the Listing creation process in createListing(),
+//        and removed from the dictionary in removeListing() and cleanup(). It is important to note that the NFTStorefront
+//        contract allows Listings to remain in a Storefront after they have been purchased, their `purchased` Bool flag
+//        set to true (see ListingDetails struct and purchase() function in Listing resource). This is also the case with the DappyMarket contract.
+//        Thus, it's possible that
+//        a DappyListing could be purchased, but remain in the Storefront resource (with its `purchased` property set to true). 
+//        This should not be an issue, because if
+//        the DappyListing was purchased, then the underlying Dappy will have been moved to the new owner and thus cannot
+//        be relisted by the previous owner, since they no longer own the Dappy. 
+//      - A getDappyIDs() function was added to the StorefrontPublic interface and the Storefront resource. This returns the keys of the 
+//        dappyIDsToResourceIDs dictionary.
+//      - When a Listing is created in createListing, we add the dappyID to the dappyIDToListingIDs dictionary.
+//      - When a DappyListing is destroyed in removeListing() and cleanup(), it is also removed from the dappyIDsToListingIDs dictionary.
+//      - Added the dappyIDToListingIDs dictionary initialization to the Storefront resource init function.
 
 
 pub contract DappyMarket {
@@ -409,6 +430,7 @@ pub contract DappyMarket {
     //
     pub resource interface StorefrontPublic {
         pub fun getListingIDs(): [UInt64]
+        pub fun getDappyIDs(): [UInt64]
         pub fun borrowListing(listingResourceID: UInt64): &DappyListing{DappyListingPublic}?
         pub fun cleanup(listingResourceID: UInt64)
    }
@@ -420,6 +442,9 @@ pub contract DappyMarket {
     pub resource Storefront : StorefrontManager, StorefrontPublic {
         // The dictionary of Listing uuids to Listing resources.
         access(self) var listings: @{UInt64: DappyListing}
+        
+        // Dictionary matching DappyIDs that have been listed to their ListingIDs
+        access(self) var dappyIDsToListingIDs: {UInt64: UInt64}
 
         // insert
         // Create and publish a Listing for an NFT.
@@ -432,6 +457,11 @@ pub contract DappyMarket {
             salePaymentVaultType: Type,
             saleCuts: [SaleCut]
          ): UInt64 {
+
+             pre {
+                 self.dappyIDsToListingIDs[dappyID] == nil: "DappyListing for this Dappy already exists!"
+             }
+
             let listing <- create DappyListing(
                 dappyProviderCapability: dappyProviderCapability,
                 dappyID: dappyID,
@@ -444,6 +474,8 @@ pub contract DappyMarket {
 
             let listingResourceID = listing.uuid
             let listingPrice = listing.getDetails().salePrice
+
+            self.dappyIDsToListingIDs[dappyID] = listingResourceID
 
             // Add the new listing to the dictionary.
             let oldListing <- self.listings[listingResourceID] <- listing
@@ -472,6 +504,14 @@ pub contract DappyMarket {
     
             // This will emit a DappyListingCompleted event.
             destroy listing
+
+            // Remove from dappyIDsToListingIDs dictionary
+            for key in self.dappyIDsToListingIDs.keys {
+                if self.dappyIDsToListingIDs[key] == listingResourceID {
+                    self.dappyIDsToListingIDs.remove(key: listingResourceID)
+                    break
+                }
+            }
         }
 
         // getListingIDs
@@ -479,6 +519,10 @@ pub contract DappyMarket {
         //
         pub fun getListingIDs(): [UInt64] {
             return self.listings.keys
+        }
+        
+        pub fun getDappyIDs(): [UInt64] {
+            return self.dappyIDsToListingIDs.keys
         }
 
         // borrowSaleItem
@@ -505,6 +549,15 @@ pub contract DappyMarket {
             let listing <- self.listings.remove(key: listingResourceID)!
             assert(listing.getDetails().purchased == true, message: "listing is not purchased, only admin can remove")
             destroy listing
+            
+            // Remove from dappyIDsToListingIDs dictionary
+            for key in self.dappyIDsToListingIDs.keys {
+                if self.dappyIDsToListingIDs[key] == listingResourceID {
+                    self.dappyIDsToListingIDs.remove(key: listingResourceID)
+                    break
+                }
+            }
+
         }
 
         // destructor
@@ -520,6 +573,7 @@ pub contract DappyMarket {
         //
         init () {
             self.listings <- {}
+            self.dappyIDsToListingIDs = {}
 
             // Let event consumers know that this storefront exists
             emit StorefrontInitialized(storefrontResourceID: self.uuid)
