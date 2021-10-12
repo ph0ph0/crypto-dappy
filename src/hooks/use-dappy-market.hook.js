@@ -1,6 +1,9 @@
 import { useEffect, useReducer, useState } from "react";
+import { mutate, query, tx } from "@onflow/fcl";
+import { useTxs } from "../providers/TxProvider";
 import { marketDappyReducer } from "../reducer/marketDappyReducer";
 import { generateDappies } from "../utils/dappies.utils";
+import { LIST_DAPPY_ON_MARKET } from "../flow/market/list-dappy-on-market.tx";
 import DappyClass from "../utils/DappyClass";
 
 export default function useDappyMarket() {
@@ -11,16 +14,18 @@ export default function useDappyMarket() {
     unlistedDappies: [],
   });
 
-  const [listingPrice, setListingPrice] = useState("")
+  const [listingPrice, setListingPrice] = useState("");
+
+  const { addTx, runningTxs } = useTxs();
 
   const updatePrice = (event) => {
     const re = /^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/;
     // if value is not blank, test the regex
-    if (event.target.value === '' || re.test(event.target.value)) {
-      console.log(`newPrice: ${event.target.value}`)
-      setListingPrice(event.target.value)
+    if (event.target.value === "" || re.test(event.target.value)) {
+      console.log(`newPrice: ${event.target.value}`);
+      setListingPrice(event.target.value);
     }
-  }
+  };
 
   useEffect(() => {
     fetchDappies();
@@ -53,28 +58,51 @@ export default function useDappyMarket() {
     }
   };
 
-  const listDappyOnMarket = () => {
-      console.log(`List dappy`)
-      fetchDappies()
-      setListingPrice("")
-  }
+  const listDappyOnMarket = async (id, name, dna, price) => {
+    dispatch({ type: "PROCESSING MARKETDAPPIES" });
+    dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
+    if (runningTxs) {
+      alert(
+        "Transactions are still running. Please wait for them to finish first."
+      );
+      return;
+    }
+    try {
+      let res = await mutate({
+        cadence: LIST_DAPPY_ON_MARKET,
+        limit: 55,
+        args: (arg, t) => [
+          arg(id, t.UInt64),
+          arg(name, t.String),
+          arg(dna, t.String),
+          arg(price, t.UFix64),
+        ],
+      });
+      addTx(res);
+      await tx(res).onceSealed();
+      setListingPrice("");
+      // fetchDappies();
+    } catch (error) {
+      console.log(`List dappy`);
+    }
+  };
 
   const removeDappyFromMarket = () => {
-      console.log(`Remove dappy`)
-      fetchDappies()
-  }
+    console.log(`Remove dappy`);
+    fetchDappies();
+  };
 
   const buyDappyOnMarket = () => {
-      console.log(`Buy dappy on market`)
-      fetchDappies()
-  }
+    console.log(`Buy dappy on market`);
+    fetchDappies();
+  };
 
   return {
-      ...state,
-      listDappyOnMarket,
-      removeDappyFromMarket,
-      buyDappyOnMarket,
-      updatePrice,
-      listingPrice
-    };
+    ...state,
+    listDappyOnMarket,
+    removeDappyFromMarket,
+    buyDappyOnMarket,
+    updatePrice,
+    listingPrice,
+  };
 }
