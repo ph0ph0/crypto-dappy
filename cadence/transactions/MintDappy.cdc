@@ -9,7 +9,7 @@ transaction(templateID: UInt32, amount: UFix64) {
 
   prepare(acct: AuthAccount) {
     self.receiverReference = acct.borrow<&DappyContract.Collection>(from: DappyContract.CollectionStoragePath) 
-        ?? panic("Cannot borrow")
+        ?? panic("Cannot borrow Dappy Collection")
     let vaultRef = acct.borrow<&FUSD.Vault>(from: /storage/fusdVault) ?? panic("Could not borrow FUSD vault")
     self.sentVault <- vaultRef.withdraw(amount: amount)
   }

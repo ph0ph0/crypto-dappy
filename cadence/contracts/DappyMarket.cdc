@@ -59,7 +59,9 @@ import FungibleToken from 0x9a0766d93b6608b7
 //      - The assertion at the end of the DappyListing initialization function was updated to use listDappies() (L380).
 // - Storefront resource/interfaces:
 //      - A dictionary mapping the DappyIDs to the ListingIDs called dappyIDsToListingIDs was added to the Storefront resource. This was necessary
-//        to prevent multiple Listings being created for the same Dappy. A getDappyIDs() function was added to the 
+//        to prevent multiple Listings being created for the same Dappy. Allowing multiple Listings referencing the same NFT was an intentional feature
+//        of the NFTStorefront contract (https://github.com/onflow/nft-storefront/issues/21#issuecomment-937342247), 
+//        but was removed in the DappyContract to prevent spamming and ghost Listings.A getDappyIDs() function was added to the 
 //        StorefrontPublic interface and thus to the Storefront resource. Using these additions, it was now possible
 //        to check if a Dappy had already been listed. This was achieved in the precondition of the createListing()
 //        function in the Storefront resource. If the DappyID exists in the dappyIDsToListingIDs dictionary, then the
@@ -72,12 +74,13 @@ import FungibleToken from 0x9a0766d93b6608b7
 //        This should not be an issue, because if
 //        the DappyListing was purchased, then the underlying Dappy will have been moved to the new owner and thus cannot
 //        be relisted by the previous owner, since they no longer own the Dappy. 
-//      - A getDappyIDs() function was added to the StorefrontPublic interface and the Storefront resource. This returns the keys of the 
+//      - A getDappyToResourceIDs() function was added to the StorefrontPublic interface and the Storefront resource. This returns the keys of the 
 //        dappyIDsToResourceIDs dictionary.
 //      - When a Listing is created in createListing, we add the dappyID to the dappyIDToListingIDs dictionary.
 //      - When a DappyListing is destroyed in removeListing() and cleanup(), it is also removed from the dappyIDsToListingIDs dictionary.
 //      - Added the dappyIDToListingIDs dictionary initialization to the Storefront resource init function.
-
+//      - NOTE: Will probs have to add in a function that converts dappyIDs to ListingResourceIDs. This is because the removeListing() call
+//        takes a listingResourceID, which a Dappy doesn't posses. 
 
 pub contract DappyMarket {
     // DappyMarketInitialized
@@ -430,7 +433,7 @@ pub contract DappyMarket {
     //
     pub resource interface StorefrontPublic {
         pub fun getListingIDs(): [UInt64]
-        pub fun getDappyIDs(): [UInt64]
+        pub fun getDappyToListingIDs(): {UInt64: UInt64}
         pub fun borrowListing(listingResourceID: UInt64): &DappyListing{DappyListingPublic}?
         pub fun cleanup(listingResourceID: UInt64)
    }
@@ -521,8 +524,8 @@ pub contract DappyMarket {
             return self.listings.keys
         }
         
-        pub fun getDappyIDs(): [UInt64] {
-            return self.dappyIDsToListingIDs.keys
+        pub fun getDappyToListingIDs(): {UInt64:UInt64} {
+            return self.dappyIDsToListingIDs
         }
 
         // borrowSaleItem
