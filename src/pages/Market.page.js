@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import ErrorLoadingRenderer from "../components/ErrorLoadingRenderer";
 import useDappyMarket from "../hooks/use-dappy-market.hook";
 import { useUser } from "../providers/UserProvider";
+import {usePolling} from "../hooks/use-polling.hook"
 
 export default function Market() {
   const {
@@ -17,6 +18,10 @@ export default function Market() {
 
   //   TODO: Remove after implementing useDappyMarket hook
   const { userDappies } = useUser();
+
+  usePolling(() => {
+    console.log("&&&Polling....")
+  }, 3000)
 
   return (
     <>
@@ -36,12 +41,7 @@ export default function Market() {
       <h4 className="app__subheader">Your Unlisted Dappies</h4>
       <ErrorLoadingRenderer loading={loadingUnlistedDappies} error={error}>
         {/* //   TODO: Remove below array functions on unlistedDappies */}
-        <DappyList
-          dappies={unlistedDappies.filter((d) =>
-            userDappies.some((D) => D.id === d.id)
-          )}
-          market
-        />
+        <DappyList dappies={userDappies} market />
       </ErrorLoadingRenderer>
       <hr className="app__hr"></hr>
       <h4 className="app__subheader">Dappies on the Market</h4>

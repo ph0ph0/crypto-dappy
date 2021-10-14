@@ -5,6 +5,9 @@ import { marketDappyReducer } from "../reducer/marketDappyReducer";
 import { generateDappies } from "../utils/dappies.utils";
 import { LIST_DAPPY_ON_MARKET } from "../flow/market/list-dappy-on-market.tx";
 import DappyClass from "../utils/DappyClass";
+import { CHECK_RESOURCES } from "../flow/check-resources.script";
+// TODO: REMOVE useAuth import
+import { useAuth } from "../providers/AuthProvider";
 
 export default function useDappyMarket() {
   const [state, dispatch] = useReducer(marketDappyReducer, {
@@ -13,6 +16,9 @@ export default function useDappyMarket() {
     marketDappies: [],
     unlistedDappies: [],
   });
+
+  // TODO: REMOVE user hook call
+  const { user } = useAuth;
 
   const [listingPrice, setListingPrice] = useState("");
 
@@ -58,7 +64,13 @@ export default function useDappyMarket() {
     }
   };
 
-  const listDappyOnMarket = async (id, name, dna, price) => {
+  const listDappyOnMarket = async (serialNumber, name, dna, price) => {
+    const dappyPrice = parseFloat(price).toFixed(2).toString();
+    const dappyID = parseInt(serialNumber);
+    if (listingPrice == "") {
+      alert("Please provide a listing price");
+      return;
+    }
     dispatch({ type: "PROCESSING MARKETDAPPIES" });
     dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
     if (runningTxs) {
@@ -70,20 +82,21 @@ export default function useDappyMarket() {
     try {
       let res = await mutate({
         cadence: LIST_DAPPY_ON_MARKET,
-        limit: 55,
+        limit: 300,
         args: (arg, t) => [
-          arg(id, t.UInt64),
+          arg(dappyID, t.UInt64),
           arg(name, t.String),
           arg(dna, t.String),
-          arg(price, t.UFix64),
+          arg(dappyPrice, t.UFix64),
         ],
       });
       addTx(res);
       await tx(res).onceSealed();
       setListingPrice("");
-      // fetchDappies();
+      console.log(`Success!`)
+      // Update dappy market!
     } catch (error) {
-      console.log(`List dappy`);
+      console.log(`Error: ${error}`);
     }
   };
 
