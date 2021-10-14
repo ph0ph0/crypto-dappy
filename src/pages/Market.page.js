@@ -8,7 +8,7 @@ import ErrorLoadingRenderer from "../components/ErrorLoadingRenderer";
 import { useUser } from "../providers/UserProvider";
 import { usePolling, } from "../hooks/use-polling.hook";
 
-import useDappyMarket from "../hooks/use-dappy-market.hook";
+import useMarket from "../hooks/use-market.hook";
 
 export default function Market() {
   const { userDappies } = useUser()
@@ -20,7 +20,7 @@ export default function Market() {
     unlistedDappies,
     firstLoadDone,
     fetchMarketDappies,
-  } = useDappyMarket(userDappies);
+  } = useMarket(userDappies);
 
   useEffect(() => {
     fetchMarketDappies()

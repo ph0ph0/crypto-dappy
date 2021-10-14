@@ -1,10 +1,10 @@
 import { useReducer, useState, useCallback } from "react";
-import { marketDappyReducer } from "../reducer/marketDappyReducer";
+import { marketReducer } from "../reducer/marketReducer";
 import DappyClass from "../utils/DappyClass";
 import axios from "axios";
 
 export default function useDappyMarket(userDappies) {
-  const [state, dispatch] = useReducer(marketDappyReducer, {
+  const [state, dispatch] = useReducer(marketReducer, {
     loadingMarketDappies: false,
     loadingUnlistedDappies: false,
     error: false,
@@ -25,7 +25,7 @@ export default function useDappyMarket(userDappies) {
       );
       const dappiesForMarket = res?.data?.body?.Items;
       let marketDappies = Object.values(dappiesForMarket).map((d) => {
-        return new DappyClass(d.templateID, d?.dna, d?.name, d?.price, d?.dappyID);
+        return new DappyClass(d.templateID, d?.dna, d?.name, d?.price, d?.dappyID, d?.listingResourceID);
       });
       console.log(`uD: ${JSON.stringify(userDappies)}`)
       const dappiesUnlisted = userDappies.filter(

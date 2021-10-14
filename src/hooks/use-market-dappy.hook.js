@@ -4,6 +4,7 @@ import { useTxs } from "../providers/TxProvider";
 import { marketDappyReducer } from "../reducer/marketDappyReducer";
 import { generateDappies } from "../utils/dappies.utils";
 import { LIST_DAPPY_ON_MARKET } from "../flow/market/list-dappy-on-market.tx";
+import { REMOVE_DAPPY_FROM_MARKET } from "../flow/market/remove-dappy-from-market.tx";
 import DappyClass from "../utils/DappyClass";
 import { CHECK_RESOURCES } from "../flow/check-resources.script";
 
@@ -11,8 +12,7 @@ export default function useMarketDappy() {
   const [state, dispatch] = useReducer(marketDappyReducer, {
     loading: false,
     error: false,
-    marketDappies: [],
-    unlistedDappies: [],
+    success: false
   });
 
   const [listingPrice, setListingPrice] = useState("");
@@ -41,8 +41,7 @@ export default function useMarketDappy() {
       alert("Please provide a listing price");
       return;
     }
-    dispatch({ type: "PROCESSING MARKETDAPPIES" });
-    dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
+    dispatch({ type: "LOADING" });
     if (runningTxs) {
       alert(
         "Transactions are still running. Please wait for them to finish first."
@@ -65,13 +64,38 @@ export default function useMarketDappy() {
       await tx(res).onceSealed();
       setListingPrice("");
       console.log(`Success!`);
-      // Update dappy market!
+      dispatch({ type: "SUCCESS" });
+      // TODO:  Update dappy market!
     } catch (error) {
       console.log(`Error: ${error}`);
+      dispatch({ type: "ERROR" });
     }
   };
 
-  const removeDappyFromMarket = () => {
+  const removeDappyFromMarket = (listingResourceID) => {
+    // TODO: Update dappy state
+    if (listingResourceID === 0) return;
+    dispatch({ type: "LOADING" });
+    try {
+      let res = await mutate({
+        cadence: REMOVE_DAPPY_FROM_MARKET,
+        limit: 300,
+        args: (arg, t) => [
+          arg(listingResourceID, t.UInt32)
+        ],
+      });
+      addTx(res);
+      await tx(res).onceSealed();
+      console.log(`Success!`);
+      dispatch({ type: "SUCCESS" });
+      // TODO:  Update dappy market!
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      dispatch({ type: "ERROR" });
+    }
+
+
+
     console.log(`Remove dappy`);
   };
 

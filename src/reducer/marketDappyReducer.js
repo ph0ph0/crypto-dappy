@@ -1,50 +1,37 @@
 /*
     *Initial State*
     {
-        loadingMarketDappies: false,
-        loadingUnlistedDappies: false,
+        loading: false,
         error: false,
-        marketDappies: [],
-        unlistedDappies: []
+        success: true
     }
 */
 
 export const marketDappyReducer = (state, action) => {
-  switch (action.type) {
-    case "PROCESSING MARKETDAPPIES":
-      return {
-        ...state,
-        loadingMarketDappies: true,
-        error: false,
-      };
-    case "PROCESSING UNLISTEDDAPPIES":
-      return {
-        ...state,
-        loadingUnlistedDappies: true,
-        error: false,
-      };
-    case "UPDATE MARKETDAPPIES":
-      return {
-        ...state,
-        loadingMarketDappies: false,
-        error: false,
-        marketDappies: action.payload,
-      };
-    case "UPDATE UNLISTEDDAPPIES":
-      return {
-        ...state,
-        loadingUnlistedDappies: false,
-        error: false,
-        unlistedDappies: action.payload,
-      };
-    case "ERROR":
-      return {
-        ...state,
-        loadingUnlistedDappies: false,
-        loadingMarketDappies: false,
-        error: true,
-      };
-    default:
-      throw new Error();
-  }
-};
+    switch (action.type) {
+      case "LOADING":
+        return {
+          ...state,
+          loading: true,
+          error: false,
+          success: false
+        };
+      case "ERROR":
+        return {
+          ...state,
+          loading: false,
+          error: true,
+          success: false
+        };
+      case "SUCCESS":
+        return {
+          ...state,
+          loading: false,
+          error: false,
+          success: true,
+        };
+      default:
+        throw new Error();
+    }
+  };
+  

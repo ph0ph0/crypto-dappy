@@ -2,12 +2,13 @@ import { COMMON, RARE, ULTRARARE } from "../config/dappies.config"
 import { parseDNA } from "./dappies.utils"
 
 class DappyClass {
-  constructor(id, dna, name, price, serialNumber) {
+  constructor(id, dna, name, price, serialNumber, listingResourceID) {
     this.id = id
     this.dna = dna
     this.name = name
     this.price = price || 0
     this.serialNumber = serialNumber || 0
+    this.listingResourceID = listingResourceID || 0
   }
 
   get rarity() {

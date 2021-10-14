@@ -10,7 +10,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
   const { userDappies, mintDappy } = useUser()
   const history = useHistory()
   const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy
-  const { id, dna, image, name, rarity, price, type, serialNumber } = dappy
+  const { id, dna, image, name, rarity, price, type, serialNumber, listingResourceID } = dappy
   const owned = userDappies.some(d => d?.id === dappy?.id)
   const ListOnMarketButton = () => (
     <div
@@ -22,7 +22,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
 
   const RemoveFromMarketButton = () => (
     <div
-      onClick={() => removeDappyFromMarket()}
+      onClick={() => removeDappyFromMarket(listingResourceID)}
       className='btn btn-bordered btn-light btn-dappy'>
       <i className='ri-close-line btn-icon'></i>REMOVE
     </div>
