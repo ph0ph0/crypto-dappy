@@ -178,6 +178,8 @@ pub contract DappyMarket {
         pub var purchased: Bool
         // The ID of the Dappy within that type.
         pub let dappyID: UInt64
+        // The templateID that was used to mint the Dappy
+        pub let templateID: UInt32,
         // The name of the dappy associated with this listing
         pub let name: String
         // The dna of the dappy associated with this listing
@@ -454,6 +456,7 @@ pub contract DappyMarket {
         //
          pub fun createListing(
             dappyProviderCapability: Capability<&{DappyContract.Provider, DappyContract.CollectionPublic}>,
+            templateID: UInt32,
             dappyID: UInt64,
             name: String,
             dna: String,
@@ -467,6 +470,7 @@ pub contract DappyMarket {
 
             let listing <- create DappyListing(
                 dappyProviderCapability: dappyProviderCapability,
+                templateID: UInt32,
                 dappyID: dappyID,
                 name: name,
                 dna: dna,
@@ -488,6 +492,7 @@ pub contract DappyMarket {
             emit DappyListingAvailable(
                 storefrontAddress: self.owner?.address!,
                 listingResourceID: listingResourceID,
+                templateID: templateID,
                 dappyID: dappyID,
                 name: name,
                 dna: dna,

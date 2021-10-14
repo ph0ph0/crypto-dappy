@@ -36,7 +36,6 @@ export default function useUserDappies(user, collection, getFUSDBalance) {
           );
           mappedDappies.push(dappy);
         }
-        console.log(`userDappies: ${JSON.stringify(mappedDappies)}`);
         dispatch({ type: "SUCCESS", payload: mappedDappies });
       } catch (err) {
         dispatch({ type: "ERROR" });

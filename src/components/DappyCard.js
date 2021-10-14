@@ -1,6 +1,6 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import useDappyMarket from '../hooks/use-dappy-market.hook'
+import useMarketDappy from '../hooks/use-market-dappy.hook'
 
 import { useUser } from '../providers/UserProvider'
 import Dappy from './Dappy'
@@ -9,12 +9,12 @@ import './DappyCard.css'
 export default function DappyCard({ dappy, store, designer, listed, market}) {
   const { userDappies, mintDappy } = useUser()
   const history = useHistory()
-  const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useDappyMarket()
+  const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy
   const { id, dna, image, name, rarity, price, type, serialNumber } = dappy
   const owned = userDappies.some(d => d?.id === dappy?.id)
   const ListOnMarketButton = () => (
     <div
-      onClick={() => listDappyOnMarket(serialNumber, name, dna, listingPrice)}
+      onClick={() => listDappyOnMarket(serialNumber, id, name, dna, listingPrice)}
       className='btn btn-bordered btn-light btn-dappy'>
       <i className='ri-list-unordered btn-icon'></i>LIST
     </div>
