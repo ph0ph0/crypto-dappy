@@ -9,7 +9,7 @@
     }
 */
 
-export const marketDappyReducer = (state, action) => {
+export const marketReducer = (state, action) => {
   switch (action.type) {
     case "PROCESSING MARKETDAPPIES":
       return {

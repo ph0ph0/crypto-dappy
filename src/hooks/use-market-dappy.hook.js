@@ -72,7 +72,7 @@ export default function useMarketDappy() {
     }
   };
 
-  const removeDappyFromMarket = (listingResourceID) => {
+  const removeDappyFromMarket = async (listingResourceID) => {
     // TODO: Update dappy state
     if (listingResourceID === 0) return;
     dispatch({ type: "LOADING" });
@@ -99,7 +99,7 @@ export default function useMarketDappy() {
     console.log(`Remove dappy`);
   };
 
-  const buyDappyOnMarket = () => {
+  const buyDappyOnMarket = async () => {
     console.log(`Buy dappy on market`);
   };
 
