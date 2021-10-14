@@ -1,14 +1,13 @@
 import React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect} from "react";
 
 import DappyList from "../components/DappyList";
 import Header from "../components/Header";
 import ErrorLoadingRenderer from "../components/ErrorLoadingRenderer";
 
 import { useUser } from "../providers/UserProvider";
-import { usePolling, useX } from "../hooks/use-polling.hook";
+import { usePolling, } from "../hooks/use-polling.hook";
 
-import axios from "axios";
 import useDappyMarket from "../hooks/use-dappy-market.hook";
 
 export default function Market() {
@@ -19,13 +18,15 @@ export default function Market() {
     error,
     marketDappies,
     unlistedDappies,
+    firstLoadDone,
     fetchMarketDappies,
   } = useDappyMarket(userDappies);
 
   useEffect(() => {
-    fetchMarketDappies();
-  }, []);
-  // usePolling(fetchMarketDappies, 6000)
+    fetchMarketDappies()
+  }, [fetchMarketDappies]);
+  
+  usePolling(fetchMarketDappies, 6000)
 
   return (
     <>

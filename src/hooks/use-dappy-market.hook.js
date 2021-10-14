@@ -1,12 +1,7 @@
-import { useEffect, useReducer, useState, useRef } from "react";
-import { mutate, query, tx } from "@onflow/fcl";
-import { useTxs } from "../providers/TxProvider";
+import { useReducer, useState, useCallback } from "react";
 import { marketDappyReducer } from "../reducer/marketDappyReducer";
-import { generateDappies } from "../utils/dappies.utils";
-import { LIST_DAPPY_ON_MARKET } from "../flow/market/list-dappy-on-market.tx";
 import DappyClass from "../utils/DappyClass";
 import axios from "axios";
-import { usePolling } from "./use-polling.hook";
 
 export default function useDappyMarket(userDappies) {
   const [state, dispatch] = useReducer(marketDappyReducer, {
@@ -16,14 +11,14 @@ export default function useDappyMarket(userDappies) {
     marketDappies: [],
     unlistedDappies: [],
   });
+  const [firstLoadDone, setFirstLoadDone] = useState(false)
 
-  const [listingPrice, setListingPrice] = useState("");
-
-  const { addTx, runningTxs } = useTxs();
-
-  const fetchMarketDappies = async () => {
-    dispatch({ type: "PROCESSING MARKETDAPPIES" });
-    dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
+  const fetchMarketDappies = useCallback(async () => {
+    if (!firstLoadDone) {
+      dispatch({ type: "PROCESSING MARKETDAPPIES" });
+      dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
+    }
+    setFirstLoadDone(true)
     try {
       const res = await axios.get(
         "https://1c4mgqsjt2.execute-api.us-east-1.amazonaws.com/test/"
@@ -47,8 +42,11 @@ export default function useDappyMarket(userDappies) {
       console.log(`response: ${JSON.stringify(res.data.body.Items)}`);
     } catch (error) {
       console.log(`Error: ${error}`);
+      dispatch({
+        type: "ERROR"
+      });
     }
-  };
+  },[userDappies]);
 
   return {
     ...state,

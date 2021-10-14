@@ -19,3 +19,4 @@ export const usePolling = (callback, delay) => {
     }
   }, [callback, delay]);
 };
+
