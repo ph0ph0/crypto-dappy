@@ -29,14 +29,14 @@ export default function useMarketDappy() {
   };
 
   const listDappyOnMarket = async (
-    serialNumber,
+    dappyID,
     templateID,
     name,
     dna,
     price
   ) => {
     const dappyPrice = parseFloat(price).toFixed(2).toString();
-    const dappyID = parseInt(serialNumber);
+    const dappyID_int = parseInt(dappyID);
     if (listingPrice == "") {
       alert("Please provide a listing price");
       return;
@@ -53,7 +53,7 @@ export default function useMarketDappy() {
         cadence: LIST_DAPPY_ON_MARKET,
         limit: 300,
         args: (arg, t) => [
-          arg(dappyID, t.UInt64),
+          arg(dappyID_int, t.UInt64),
           arg(templateID, t.UInt32),
           arg(name, t.String),
           arg(dna, t.String),

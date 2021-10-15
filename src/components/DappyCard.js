@@ -10,11 +10,11 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
   const { userDappies, mintDappy } = useUser()
   const history = useHistory()
   const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy
-  const { id, dna, image, name, rarity, price, type, serialNumber, listingResourceID } = dappy
+  const { id, dna, image, name, rarity, price, type, dappyID, listingResourceID } = dappy
   const owned = userDappies.some(d => d?.id === dappy?.id)
   const ListOnMarketButton = () => (
     <div
-      onClick={() => listDappyOnMarket(serialNumber, id, name, dna, listingPrice)}
+      onClick={() => listDappyOnMarket(dappyID, id, name, dna, listingPrice)}
       className='btn btn-bordered btn-light btn-dappy'>
       <i className='ri-list-unordered btn-icon'></i>LIST
     </div>
@@ -70,7 +70,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
         <br />
         <h3 className='dappy-card__title'>{name}</h3>
         {!designer ? 
-          <p className='dappy-card__info'> # {id} {owned && !store && ` / ${serialNumber}`} </p>
+          <p className='dappy-card__info'> # {id} {owned && !store && ` / ${dappyID}`} </p>
          : <input className='dappy-card__info' value={dna} />
         }
         <p className='dappy-card__info'>{rarity}</p>

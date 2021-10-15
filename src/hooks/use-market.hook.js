@@ -29,10 +29,10 @@ export default function useDappyMarket(userDappies) {
       });
       console.log(`uD: ${JSON.stringify(userDappies)}`)
       const dappiesUnlisted = userDappies.filter(
-        (x) => !dappiesForMarket.find((y) => y.dappyID === parseInt(x.serialNumber)));
+        (x) => !dappiesForMarket.find((y) => y.dappyID === parseInt(x.dappyID)));
       console.log(`****dUL: ${JSON.stringify(dappiesUnlisted)}`)
       let unlistedDappies = Object.values(dappiesUnlisted).map((d) => {
-        return new DappyClass(d?.id, d?.dna, d?.name, d?.price, d?.serialNumber);
+        return new DappyClass(d?.id, d?.dna, d?.name, d?.price, d?.dappyID);
       });
       dispatch({ type: "UPDATE UNLISTEDDAPPIES", payload: unlistedDappies });
       dispatch({
@@ -46,7 +46,7 @@ export default function useDappyMarket(userDappies) {
         type: "ERROR"
       });
     }
-  },[userDappies]);
+  },[userDappies, firstLoadDone]);
 
   return {
     ...state,
