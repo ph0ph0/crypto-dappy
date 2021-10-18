@@ -18,7 +18,6 @@ export default function Market() {
     error,
     marketDappies,
     unlistedDappies,
-    firstLoadDone,
     fetchMarketDappies,
   } = useMarket(userDappies);
 
@@ -26,7 +25,7 @@ export default function Market() {
     fetchMarketDappies()
   }, [fetchMarketDappies]);
   
-  usePolling(fetchMarketDappies, 6000)
+  // usePolling(fetchMarketDappies, 6000)
 
   return (
     <>

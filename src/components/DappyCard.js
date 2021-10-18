@@ -10,8 +10,8 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
   const { userDappies, mintDappy } = useUser()
   const history = useHistory()
   const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy()
-  const { id, dna, image, name, rarity, price, type, dappyID, listingResourceID } = dappy
-  const owned = userDappies.some(d => parseInt(d?.dappyID) === dappy?.dappyID)
+  const { id, dna, image, name, rarity, price, type, dappyID, listingResourceID, storefrontAddress } = dappy
+  const owned = userDappies.some(d => parseInt(d?.dappyID) === parseInt(dappy?.dappyID))
   const purchasedTemplate = userDappies.some(d => d?.id === dappy?.id)
   const ListOnMarketButton = () => (
     <div
@@ -31,7 +31,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
 
   const BuyFromMarketButton = () => (
     <div
-      onClick={() => buyDappyOnMarket()}
+      onClick={() => buyDappyOnMarket(listingResourceID, storefrontAddress)}
       className='btn btn-bordered btn-light btn-dappy'>
       <i className='ri-store-2-line btn-icon'></i>
       {parseInt(price)} FUSD

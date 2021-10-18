@@ -25,7 +25,7 @@ export default function useDappyMarket(userDappies) {
       );
       const dappiesForMarket = res?.data?.body?.Items;
       let marketDappies = Object.values(dappiesForMarket).map((d) => {
-        return new DappyClass(d.templateID, d?.dna, d?.name, d?.price, d?.dappyID, d?.listingResourceID);
+        return new DappyClass(d.templateID, d?.dna, d?.name, d?.price, d?.dappyID, d?.listingResourceID, d?.storefrontAddress);
       });
       console.log(`uD: ${JSON.stringify(userDappies)}`)
       const dappiesUnlisted = userDappies.filter(

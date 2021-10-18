@@ -1,3 +1,4 @@
+export const BUY_DAPPY_ON_MARKET = `
 import DappyMarket from 0x29e893174dd9b963
 import DappyContract from 0x29e893174dd9b963
 import FUSD from 0xe223d8a629e49c68
@@ -44,3 +45,5 @@ transaction(listingResourceID: UInt64, storefrontAddress: Address) {
         self.storefrontRef.cleanup(listingResourceID: listingResourceID)
     }
 }
+
+`

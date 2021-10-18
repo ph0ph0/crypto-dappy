@@ -38,7 +38,7 @@ transaction(dappyID: UInt64, templateID: UInt32, name: String, dna: String, pric
             templateID: templateID,
             name: name, 
             dna: dna, 
-            salePaymentVaultType: self.fusdVaultCap.getType(), 
+            salePaymentVaultType: Type<@FUSD.Vault>(), 
             saleCuts: saleCuts
             )
 

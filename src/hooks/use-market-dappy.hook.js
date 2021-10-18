@@ -7,6 +7,7 @@ import { LIST_DAPPY_ON_MARKET } from "../flow/market/list-dappy-on-market.tx";
 import { REMOVE_DAPPY_FROM_MARKET } from "../flow/market/remove-dappy-from-market.tx";
 import DappyClass from "../utils/DappyClass";
 import { CHECK_RESOURCES } from "../flow/check-resources.script";
+import { BUY_DAPPY_ON_MARKET } from "../flow/market/buy-dappy-on-market.tx";
 
 export default function useMarketDappy() {
   const [state, dispatch] = useReducer(marketDappyReducer, {
@@ -99,8 +100,29 @@ export default function useMarketDappy() {
     console.log(`Remove dappy`);
   };
 
-  const buyDappyOnMarket = async () => {
-    console.log(`Buy dappy on market`);
+  const buyDappyOnMarket = async (listingResourceID, storefrontAddress) => {
+    console.log(`Buy dappy on market: ${listingResourceID}, storefrontAddress: ${storefrontAddress}`);
+    // TODO: Update dappy state
+    if (listingResourceID === 0) return;
+    dispatch({ type: "LOADING" });
+    try {
+      let res = await mutate({
+        cadence: BUY_DAPPY_ON_MARKET,
+        limit: 300,
+        args: (arg, t) => [
+          arg(listingResourceID, t.UInt64),
+          arg(storefrontAddress, t.Address)
+        ],
+      });
+      addTx(res);
+      await tx(res).onceSealed();
+      console.log(`Success!`);
+      dispatch({ type: "SUCCESS" });
+      // TODO:  Update dappy market!
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      dispatch({ type: "ERROR" });
+    }
   };
 
   return {
