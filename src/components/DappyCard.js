@@ -12,6 +12,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
   const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy()
   const { id, dna, image, name, rarity, price, type, dappyID, listingResourceID } = dappy
   const owned = userDappies.some(d => parseInt(d?.dappyID) === dappy?.dappyID)
+  const purchasedTemplate = userDappies.some(d => d?.id === dappy?.id)
   const ListOnMarketButton = () => (
     <div
       onClick={() => listDappyOnMarket(dappyID, id, name, dna, listingPrice)}
@@ -63,14 +64,14 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
 
   return (
     <div className='dappy-card__border'>
-      <div className={`dappy-card__wrapper ${owned && store && 'faded'}`}>
+      <div className={`dappy-card__wrapper ${purchasedTemplate && store && 'faded'}`}>
         {type === 'Dappy' ? <Dappy dna={dna} /> : 
           <img className={`dappy-card__image ${type === 'Pack' && 'img-large'}`} src={image} alt='Pack' />
         }
         <br />
         <h3 className='dappy-card__title'>{name}</h3>
         {!designer ? 
-          <p className='dappy-card__info'> # {id} {owned && !store && ` / ${dappyID}`} </p>
+          <p className='dappy-card__info'> # {id} {purchasedTemplate && !store && ` / ${dappyID}`} </p>
          : <input className='dappy-card__info' value={dna} />
         }
         <p className='dappy-card__info'>{rarity}</p>
@@ -81,12 +82,12 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
           {market && owned && !listed && <ListOnMarketButton />}
           {market && owned && listed && <RemoveFromMarketButton />}
           {market && !owned && <BuyFromMarketButton />}
-          {!market && !owned && type === 'Dappy' && <DappyButton />}
-          {!owned && type === 'Pack' && <PackButton />}
+          {!market && !purchasedTemplate && type === 'Dappy' && <DappyButton />}
+          {!purchasedTemplate && type === 'Pack' && <PackButton />}
         </>
       }
 
-      {store && owned && !designer && 
+      {store && purchasedTemplate && !designer && 
         <div className='collected'>Collected</div>
       }
     </div>
