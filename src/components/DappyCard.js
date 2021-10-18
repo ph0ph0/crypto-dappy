@@ -9,14 +9,14 @@ import './DappyCard.css'
 export default function DappyCard({ dappy, store, designer, listed, market}) {
   const { userDappies, mintDappy } = useUser()
   const history = useHistory()
-  const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy
+  const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy()
   const { id, dna, image, name, rarity, price, type, dappyID, listingResourceID } = dappy
-  const owned = userDappies.some(d => d?.id === dappy?.id)
+  const owned = userDappies.some(d => parseInt(d?.dappyID) === dappy?.dappyID)
   const ListOnMarketButton = () => (
     <div
       onClick={() => listDappyOnMarket(dappyID, id, name, dna, listingPrice)}
       className='btn btn-bordered btn-light btn-dappy'>
-      <i className='ri-list-unordered btn-icon'></i>LIST
+      <i className='ri-list-unordered btn-icon'></i>LIST 
     </div>
   )
 

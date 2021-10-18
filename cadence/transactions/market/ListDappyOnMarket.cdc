@@ -5,7 +5,7 @@ import DappyContract from 0x29e893174dd9b963
 import FUSD from 0xe223d8a629e49c68
 import FungibleToken from 0x9a0766d93b6608b7
 
-transaction(id: UInt64, templateID: UInt32, name: String, dna: String, price: UFix64) {
+transaction(dappyID: UInt64, templateID: UInt32, name: String, dna: String, price: UFix64) {
 
     var storefrontRef: &DappyMarket.Storefront{DappyMarket.StorefrontManager}
     var dappyProviderCap: Capability<&{DappyContract.Provider, DappyContract.CollectionPublic}>
@@ -35,8 +35,8 @@ transaction(id: UInt64, templateID: UInt32, name: String, dna: String, price: UF
         let saleCuts: [DappyMarket.SaleCut] = [DappyMarket.SaleCut(receiver: self.fusdVaultCap, amount: price)]
         self.storefrontRef.createListing(
             dappyProviderCapability: self.dappyProviderCap, 
+            dappyID: dappyID, 
             templateID: templateID,
-            dappyID: id, 
             name: name, 
             dna: dna, 
             salePaymentVaultType: self.fusdVaultCap.getType(), 

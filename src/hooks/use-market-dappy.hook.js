@@ -81,7 +81,7 @@ export default function useMarketDappy() {
         cadence: REMOVE_DAPPY_FROM_MARKET,
         limit: 300,
         args: (arg, t) => [
-          arg(listingResourceID, t.UInt32)
+          arg(listingResourceID, t.UInt64)
         ],
       });
       addTx(res);
@@ -105,9 +105,9 @@ export default function useMarketDappy() {
 
   return {
     ...state,
-    listDappyOnMarket,
-    removeDappyFromMarket,
     buyDappyOnMarket,
+    removeDappyFromMarket,
+    listDappyOnMarket,
     updatePrice,
     listingPrice,
   };

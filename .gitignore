@@ -27,6 +27,8 @@ dappykeys.json
 userkeys.json
 useraccount.json
 
+CLI_Commands.txt
+
 # added during FLIP Fest
 flow.json
 run.sh

@@ -82,6 +82,7 @@ import FungibleToken from 0x9a0766d93b6608b7
 //      - NOTE: Will probs have to add in a function that converts dappyIDs to ListingResourceIDs. This is because the removeListing() call
 //        takes a listingResourceID, which a Dappy doesn't posses. 
 
+
 pub contract DappyMarket {
     // DappyMarketInitialized
     // This contract has been deployed.
@@ -120,6 +121,7 @@ pub contract DappyMarket {
         storefrontAddress: Address,
         listingResourceID: UInt64,
         dappyID: UInt64,
+        templateID: UInt32,
         name: String,
         dna: String,
         ftVaultType: Type,
@@ -179,7 +181,7 @@ pub contract DappyMarket {
         // The ID of the Dappy within that type.
         pub let dappyID: UInt64
         // The templateID that was used to mint the Dappy
-        pub let templateID: UInt32,
+        pub let templateID: UInt32
         // The name of the dappy associated with this listing
         pub let name: String
         // The dna of the dappy associated with this listing
@@ -202,6 +204,7 @@ pub contract DappyMarket {
         //
         init (
             dappyID: UInt64,
+            templateID: UInt32,
             name: String,
             dna: String,
             salePaymentVaultType: Type,
@@ -211,6 +214,7 @@ pub contract DappyMarket {
             self.storefrontID = storefrontID
             self.purchased = false
             self.dappyID = dappyID
+            self.templateID = templateID
             self.name = name
             self.dna = dna
             self.salePaymentVaultType = salePaymentVaultType
@@ -376,6 +380,7 @@ pub contract DappyMarket {
         init (
             dappyProviderCapability: Capability<&{DappyContract.Provider, DappyContract.CollectionPublic}>,
             dappyID: UInt64,
+            templateID: UInt32,
             name: String,
             dna: String,
             salePaymentVaultType: Type,
@@ -385,6 +390,7 @@ pub contract DappyMarket {
             // Store the sale information
             self.details = DappyListingDetails(
                 dappyID: dappyID,
+                templateID: templateID,
                 name: name,
                 dna: dna,
                 salePaymentVaultType: salePaymentVaultType,
@@ -418,6 +424,7 @@ pub contract DappyMarket {
         pub fun createListing(
             dappyProviderCapability: Capability<&{DappyContract.Provider, DappyContract.CollectionPublic}>,
             dappyID: UInt64,
+            templateID: UInt32,
             name: String,
             dna: String,
             salePaymentVaultType: Type,
@@ -456,8 +463,8 @@ pub contract DappyMarket {
         //
          pub fun createListing(
             dappyProviderCapability: Capability<&{DappyContract.Provider, DappyContract.CollectionPublic}>,
-            templateID: UInt32,
             dappyID: UInt64,
+            templateID: UInt32,
             name: String,
             dna: String,
             salePaymentVaultType: Type,
@@ -470,8 +477,8 @@ pub contract DappyMarket {
 
             let listing <- create DappyListing(
                 dappyProviderCapability: dappyProviderCapability,
-                templateID: UInt32,
                 dappyID: dappyID,
+                templateID: templateID,
                 name: name,
                 dna: dna,
                 salePaymentVaultType: salePaymentVaultType,
@@ -492,8 +499,8 @@ pub contract DappyMarket {
             emit DappyListingAvailable(
                 storefrontAddress: self.owner?.address!,
                 listingResourceID: listingResourceID,
-                templateID: templateID,
                 dappyID: dappyID,
+                templateID: templateID,
                 name: name,
                 dna: dna,
                 ftVaultType: salePaymentVaultType,
@@ -507,6 +514,11 @@ pub contract DappyMarket {
         // Remove a Listing that has not yet been purchased from the collection and destroy it.
         //
         pub fun removeListing(listingResourceID: UInt64) {
+            post {
+                self.dappyIDsToListingIDs.values.contains(listingResourceID) == false : 
+                    "id was not removed from dappyIDstoListingIDs"
+            }
+
             let listing <- self.listings.remove(key: listingResourceID)
                 ?? panic("missing Listing")
     
@@ -514,9 +526,10 @@ pub contract DappyMarket {
             destroy listing
 
             // Remove from dappyIDsToListingIDs dictionary
+            // original below
             for key in self.dappyIDsToListingIDs.keys {
                 if self.dappyIDsToListingIDs[key] == listingResourceID {
-                    self.dappyIDsToListingIDs.remove(key: listingResourceID)
+                    self.dappyIDsToListingIDs.remove(key: key)
                     break
                 }
             }
@@ -553,6 +566,10 @@ pub contract DappyMarket {
             pre {
                 self.listings[listingResourceID] != nil: "could not find listing with given id"
             }
+            post {
+                self.dappyIDsToListingIDs.values.contains(listingResourceID) == false : 
+                    "id was not removed from dappyIDstoListingIDs"
+            }
 
             let listing <- self.listings.remove(key: listingResourceID)!
             assert(listing.getDetails().purchased == true, message: "listing is not purchased, only admin can remove")
@@ -561,7 +578,7 @@ pub contract DappyMarket {
             // Remove from dappyIDsToListingIDs dictionary
             for key in self.dappyIDsToListingIDs.keys {
                 if self.dappyIDsToListingIDs[key] == listingResourceID {
-                    self.dappyIDsToListingIDs.remove(key: listingResourceID)
+                    self.dappyIDsToListingIDs.remove(key: key)
                     break
                 }
             }
