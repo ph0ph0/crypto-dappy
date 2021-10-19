@@ -1,3 +1,4 @@
+export const GET_DAPPYIDS_TO_LISTINGIDS = `
 // Returns a dictionary mapping DappyIDsToListingIDs that the user owns.
 
 import DappyMarket from 0x29e893174dd9b963
@@ -11,3 +12,5 @@ pub fun main(addr: Address): {UInt64: UInt64} {
     let dappyDict = ref.getDappyToListingIDs()
     return dappyDict
 }
+
+`

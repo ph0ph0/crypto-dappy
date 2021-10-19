@@ -7,7 +7,7 @@ class DappyClass {
     this.dna = dna
     this.name = name
     this.price = price || 0
-    this.dappyID = dappyID || 0
+    this.dappyID = parseInt(dappyID) || 0
     this.listingResourceID = listingResourceID || 0
     this.storefrontAddress = storefrontAddress || 0
   }
