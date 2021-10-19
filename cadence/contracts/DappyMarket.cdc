@@ -55,7 +55,7 @@ import FungibleToken from 0x9a0766d93b6608b7
 //         was changed to `ownsDappy()`. It returns a boolean that indicates if the account owns the Dappy. To 
 //        achieve the same effect, the getIDs() method of the DappyContract CollectionPublic (L187) could have also been
 //        used. However, this returns an array, and dictionary lookup using the ID would be more efficient than
-//        iterating through an array of IDs. 
+//        iterating through an array of IDs.
 //      - The assertion at the end of the DappyListing initialization function was updated to use listDappies() (L380).
 // - Storefront resource/interfaces:
 //      - A dictionary mapping the DappyIDs to the ListingIDs called dappyIDsToListingIDs was added to the Storefront resource. This was necessary

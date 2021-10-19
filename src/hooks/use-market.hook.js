@@ -3,6 +3,7 @@ import { marketReducer } from "../reducer/marketReducer";
 import DappyClass from "../utils/DappyClass";
 import axios from "axios";
 import { GET_DAPPYIDS_TO_LISTINGIDS } from "../flow/market/GetDappyIDsToListingsIDs.script";
+import { sortDappies } from "../utils/sortDappies.utils";
 
 import { mutate, query, tx } from "@onflow/fcl";
 
@@ -14,7 +15,7 @@ export default function useMarket(user, userDappies) {
     marketDappies: [],
     unlistedDappies: [],
   });
-  const [firstLoadDone, setFirstLoadDone] = useState(false)
+  const [firstLoadDone, setFirstLoadDone] = useState(false);
 
   const queryBackend = async () => {
     try {
@@ -24,26 +25,34 @@ export default function useMarket(user, userDappies) {
       console.log(`response: ${JSON.stringify(res.data.body.Items)}`);
       return res?.data?.body?.Items;
     } catch (error) {
-      throw new Error(`Error querying backend: ${error}`)
+      throw new Error(`Error querying backend: ${error}`);
     }
-    
-  }
+  };
 
   const fetchMarketDappies = useCallback(async () => {
     if (!firstLoadDone) {
       dispatch({ type: "PROCESSING MARKETDAPPIES" });
       dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
     }
-    setFirstLoadDone(true)
+    setFirstLoadDone(true);
     try {
-      const dappiesForMarket = await queryBackend()
+      const dappiesForMarket = await queryBackend();
       let marketDappies = Object.values(dappiesForMarket).map((d) => {
-        return new DappyClass(d.templateID, d?.dna, d?.name, d?.price, d?.dappyID, d?.listingResourceID, d?.storefrontAddress);
+        return new DappyClass(
+          d.templateID,
+          d?.dna,
+          d?.name,
+          d?.price,
+          d?.dappyID,
+          d?.listingResourceID,
+          d?.storefrontAddress
+        );
       });
-      console.log(`uD: ${JSON.stringify(userDappies)}`)
+      console.log(`uD: ${JSON.stringify(userDappies)}`);
       const dappiesUnlisted = userDappies.filter(
-        (x) => !dappiesForMarket.find((y) => y.dappyID === parseInt(x.dappyID)));
-      console.log(`****dUL: ${JSON.stringify(dappiesUnlisted)}`)
+        (x) => !dappiesForMarket.find((y) => y.dappyID === parseInt(x.dappyID))
+      );
+      console.log(`****dUL: ${JSON.stringify(dappiesUnlisted)}`);
       let unlistedDappies = Object.values(dappiesUnlisted).map((d) => {
         return new DappyClass(d?.id, d?.dna, d?.name, d?.price, d?.dappyID);
       });
@@ -55,32 +64,61 @@ export default function useMarket(user, userDappies) {
     } catch (error) {
       console.log(`Error: ${error}`);
       dispatch({
-        type: "ERROR"
+        type: "ERROR",
       });
     }
-  },[userDappies, firstLoadDone]);
+  }, [userDappies, firstLoadDone]);
 
   const getDappyIDsToListingIDs = async () => {
     try {
-      let res = await query({ 
-        cadence: GET_DAPPYIDS_TO_LISTINGIDS, 
-        args: (arg, t) => [arg(user?.addr, t.Address)] })
-      return res
+      let res = await query({
+        cadence: GET_DAPPYIDS_TO_LISTINGIDS,
+        args: (arg, t) => [arg(user?.addr, t.Address)],
+      });
+      return res;
     } catch (err) {
-      throw new Error(`Error getting DappyIdsToListingIDs${err}`)
+      throw new Error(`Error getting DappyIdsToListingIDs${err}`);
     }
-}
+  };
 
   const updateMarket = async () => {
     // uD, dappyIDs, APIresponse
-    console.log(`&&&&&&&&UPDATING MARKET`)
-    let dappyIDs = getDappyIDsToListingIDs()
-    const dappiesForMarket = await queryBackend()
-    console.log(`DappyIDs dictionary: ${JSON.stringify(dappyIDs)}`)
-  }
+    console.log(`&&&&&&&&UPDATING MARKET`);
+    let dappyIDs = getDappyIDsToListingIDs();
+    const dappiesForMarket = await queryBackend();
+    console.log(`DappyIDs dictionary: ${JSON.stringify(dappyIDs)}`);
+    // const { unlistedDappies, marketDappies } = sortDappies({
+    //   userDappies,
+    //   identifierDictionary,
+    //   dappiesForMarket,
+    // });
+    // let marketDappiesObjects = Object.values(marketDappies).map((d) => {
+    //   return new DappyClass(
+    //     d.templateID,
+    //     d?.dna,
+    //     d?.name,
+    //     d?.price,
+    //     d?.dappyID,
+    //     d?.listingResourceID,
+    //     d?.storefrontAddress
+    //   );
+    // });
+    // let unlistedDappiesObjects = Object.values(unlistedDappies).map((d) => {
+    //   return new DappyClass(d?.id, d?.dna, d?.name, d?.price, d?.dappyID);
+    // });
+    // dispatch({
+    //   type: "UPDATE MARKETDAPPIES",
+    //   payload: marketDappiesObjects,
+    // });
+    // dispatch({
+    //   type: "UPDATE UNLISTEDDAPPIES",
+    //   payload: unlistedDappiesObjects,
+    // });
+  };
 
   return {
     ...state,
     fetchMarketDappies,
+    updateMarket,
   };
 }

@@ -3,13 +3,15 @@ import { useHistory } from 'react-router-dom'
 import useMarketDappy from '../hooks/use-market-dappy.hook'
 
 import { useUser } from '../providers/UserProvider'
+import { useMarketContext } from '../providers/MarketProvider'
 import Dappy from './Dappy'
 import './DappyCard.css'
 
 export default function DappyCard({ dappy, store, designer, listed, market}) {
   const { userDappies, mintDappy } = useUser()
   const history = useHistory()
-  const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy()
+  const {updateMarket} = useMarketContext()
+  const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy(updateMarket)
   const { id, dna, image, name, rarity, price, type, dappyID, listingResourceID, storefrontAddress } = dappy
   const owned = userDappies.some(d => parseInt(d?.dappyID) === parseInt(dappy?.dappyID))
   const purchasedTemplate = userDappies.some(d => d?.id === dappy?.id)

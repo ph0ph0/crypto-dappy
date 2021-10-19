@@ -35,7 +35,7 @@ export const sortDappies = ({
   // Dappies 5
   const listedUnownedDappies = [];
 
-  // Order of if statements is important
+  // Order of statements is important
   for (const index in dappiesForMarket) {
     if (
       dappyIDFoundInIDDictionary(
@@ -73,7 +73,6 @@ export const sortDappies = ({
       )
     ) {
       // 5
-
       listedUnownedDappies.push(dappiesForMarket[index]);
     }
   }
@@ -109,6 +108,81 @@ export const sortDappies = ({
   console.log(`listedOwnedDappies: ${JSON.stringify(listedOwnedDappies)}`);
   console.log(`listedUnownedDappies: ${JSON.stringify(listedUnownedDappies)}`);
 
-  const marketDappies = listedOwnedDappies.push(listedUnownedDappies);
+  const marketDappies = listedOwnedDappies.concat(listedUnownedDappies);
   return { unlistedDappies, marketDappies };
 };
+
+// NOTE:
+// This file sorts three datasets of dappies into two datasets;
+// marketDappies and unlistedDappies. This is necessary to provide
+// the user with a responsive UI that updates as soon as the
+// blockchain updates after the user executes a transaction.
+// Without this, the update would occur as soon as the backend updates,
+//  which might not be quick enough, and could introduce other bugs
+//  into the application.
+
+// There are three datasets that we can use to deduce whether a
+// dappy is unlisted or listed on the market.
+// - userDappies: Comes from the blockchain, and so can be trusted,
+// so long as the data is fresh.
+// - identifierDictionary: This is a dictionary that maps the dappyID to
+// the listingResourceID for dappies that are owned by the current user
+// and currently listed on the market. Can be trusted so long as the
+// data is fresh.
+// - dappiesForMarket: Comes from the API, and could be outdated since
+// the FlowEventMonitor runs on a schedule. Can't be trusted, but is
+// our only datasource that tells us which dappies might be on the
+// market, particularly those from other users.
+//
+// There are 5 types of Dappy, and three groups that they can fall into.
+//  The groups are Unlisted, Market(owned) and Market(not owned). Owned refers
+// to ownership by the current user.
+// A description of the types of Dappies and which datasets
+// they are found in follows:
+//
+// 1 = Unlisted: dappy owned, but appears on market
+// Description: This happens when a user buys a dappy in the market.
+// The blockchain updates instantly, but the backend hasn't yet
+// updated. As a result, the dappiesForMarket array
+// (which is provided by the API response) still
+// contains the old Listing referenceing the dappy we just bought
+// suggesting that it is still available in the market
+//  - Found in userDappies √
+//  - NOT found in identifierDictionary √
+//  - (Found in dappiesForMarket) √
+
+// 2 (1b) = Unlisted: dappy owned, doesnt appear on market
+// Description: This happens when both the backend and the
+// blockchain agree that they own the dappy, but haven't
+// listed it on the market. Problem is that we can't check
+// if the
+//  - Found in userDappies only √
+//  - NOT found in identifierDictionary √
+//  - (NOT Found in dappiesForMarket) √
+
+// 3 and 4 = Market(owned): dappy owned, on market
+// Description: This ensures that only dappies that the user
+// owns are on the market listed as owned. The blockchain
+// is the truth, so if dappy is found in userDappies and
+// ownedListings array, then it must be on the market.
+// If the backend hasn't updated yet (example 4 here),
+// then the dappy will be found in userDappies, but not
+// in dappiesForMarket, as backend hasn't updated yet.
+// This can occur when a user lists their dappy on the market.
+// There is a delay between the blockchain updating and the
+// backend updating, where the backend lags behind.
+// userDappies doesnt give us a listingResourceID, but
+// we can we can use the dappyID to compare to the
+// identifier dictionary, and if it is found there,
+// and
+//  - Found in userDappies √
+//  - Found in identifierDictionary √
+//  - Found in dappiesForMarket (Not essential) √
+
+// 5 = Market(unowned): dappy not owned, on market
+// Description: If the dappy is not in the userDappies array,
+// not in the ownedListings array, but found in the
+// dappiesForMarket, then it must be on the market.
+//  - NOT found in userDappies
+//  - NOT found in identifierDictionary
+//  - Found in dappies for market only.
