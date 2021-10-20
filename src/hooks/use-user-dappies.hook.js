@@ -15,32 +15,33 @@ export default function useUserDappies(user, collection, getFUSDBalance) {
   });
   const { addTx, runningTxs } = useTxs();
 
-  useEffect(() => {
-    const fetchUserDappies = async () => {
-      dispatch({ type: "PROCESSING" });
-      try {
-        let res = await query({
-          cadence: LIST_USER_DAPPIES,
-          args: (arg, t) => [arg(user?.addr, t.Address)],
-        });
-        let mappedDappies = [];
+  const fetchUserDappies = async () => {
+    dispatch({ type: "PROCESSING" });
+    try {
+      let res = await query({
+        cadence: LIST_USER_DAPPIES,
+        args: (arg, t) => [arg(user?.addr, t.Address)],
+      });
+      let mappedDappies = [];
 
-        for (let key in res) {
-          const element = res[key];
-          let dappy = new DappyClass(
-            element.templateID,
-            element.dna,
-            element.name,
-            element.price,
-            key
-          );
-          mappedDappies.push(dappy);
-        }
-        dispatch({ type: "SUCCESS", payload: mappedDappies });
-      } catch (err) {
-        dispatch({ type: "ERROR" });
+      for (let key in res) {
+        const element = res[key];
+        let dappy = new DappyClass(
+          element.templateID,
+          element.dna,
+          element.name,
+          element.price,
+          key
+        );
+        mappedDappies.push(dappy);
       }
-    };
+      dispatch({ type: "SUCCESS", payload: mappedDappies });
+    } catch (err) {
+      dispatch({ type: "ERROR" });
+    }
+  };
+
+  useEffect(() => {
     fetchUserDappies();
     //eslint-disable-next-line
   }, []);
@@ -122,5 +123,6 @@ export default function useUserDappies(user, collection, getFUSDBalance) {
     mintDappy,
     addDappy,
     batchAddDappies,
+    fetchUserDappies
   };
 }

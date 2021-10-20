@@ -7,6 +7,7 @@ import ErrorLoadingRenderer from "../components/ErrorLoadingRenderer";
 
 import { useMarketContext } from "../providers/MarketProvider";
 import { usePolling } from "../hooks/use-polling.hook";
+import { useUser } from "../providers/UserProvider";
 
 
 
@@ -22,8 +23,10 @@ export default function Market() {
   } = useMarketContext();
 
   useEffect(() => {
+    console.log(`@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!`)
     fetchMarketDappies();
-  }, [fetchMarketDappies]);
+    //eslint-disable-next-line
+  }, []);
 
   // usePolling(fetchMarketDappies, 6000)
 

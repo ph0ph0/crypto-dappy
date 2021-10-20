@@ -11,7 +11,7 @@ export default function UserProvider({ children }) {
   const { user } = useAuth()
   const { collection, createCollection, deleteCollection } = useCollection(user)
   const { data: balance, createFUSDVault, getFUSDBalance } = useFUSD(user)
-  const { data: userDappies, addDappy, batchAddDappies, mintDappy } = useUserDappies(user, collection, getFUSDBalance)
+  const { data: userDappies, addDappy, batchAddDappies, mintDappy, fetchUserDappies } = useUserDappies(user, collection, getFUSDBalance)
 
   return (
     <UserContext.Provider
@@ -20,6 +20,7 @@ export default function UserProvider({ children }) {
         mintDappy,
         addDappy,
         batchAddDappies,
+        fetchUserDappies,
         collection,
         createCollection,
         deleteCollection,
