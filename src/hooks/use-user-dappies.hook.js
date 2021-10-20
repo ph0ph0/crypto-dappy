@@ -17,6 +17,7 @@ export default function useUserDappies(user, collection, getFUSDBalance) {
 
   useEffect(() => {
     const fetchUserDappies = async () => {
+      console.log(`#######################################FETCHING USER DAPPIES`)
       dispatch({ type: "PROCESSING" });
       try {
         let res = await query({
@@ -36,6 +37,7 @@ export default function useUserDappies(user, collection, getFUSDBalance) {
           );
           mappedDappies.push(dappy);
         }
+        console.log(`userDappies: ${JSON.stringify(mappedDappies)}`)
         dispatch({ type: "SUCCESS", payload: mappedDappies });
       } catch (err) {
         dispatch({ type: "ERROR" });

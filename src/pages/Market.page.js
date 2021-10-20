@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import DappyList from "../components/DappyList";
 import Header from "../components/Header";
@@ -21,8 +21,12 @@ export default function Market() {
     fetchMarketDappies,
   } = useMarketContext();
 
+  const [didMount, setDidMount] = useState(false)
+
   useEffect(() => {
+    setDidMount(true)
     fetchMarketDappies();
+    return () => setDidMount(false)
   }, [fetchMarketDappies]);
 
   // usePolling(fetchMarketDappies, 6000)

@@ -26,6 +26,9 @@ export const sortDappies = ({
   identifierDictionary,
   dappiesForMarket,
 }) => {
+  console.log(`userDappies: ${JSON.stringify(userDappies)}`)
+  console.log(`identifierDictionary: ${JSON.stringify(identifierDictionary)}`)
+  console.log(`dappiesForMarket: ${JSON.stringify(dappiesForMarket)}`)
   // Dappies 1 & 2
   const unlistedDappies = [];
 
@@ -104,7 +107,7 @@ export const sortDappies = ({
       listedOwnedDappies.push(userDappies[index]);
   }
 
-  console.log(`unlistedDappies: ${JSON.stringify(unlistedDappies)}`);
+  console.log(`unlistedOwnedDappies: ${JSON.stringify(unlistedDappies)}`);
   console.log(`listedOwnedDappies: ${JSON.stringify(listedOwnedDappies)}`);
   console.log(`listedUnownedDappies: ${JSON.stringify(listedUnownedDappies)}`);
 

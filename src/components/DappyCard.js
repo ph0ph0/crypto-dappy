@@ -15,6 +15,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
   const { id, dna, image, name, rarity, price, type, dappyID, listingResourceID, storefrontAddress } = dappy
   const owned = userDappies.some(d => parseInt(d?.dappyID) === parseInt(dappy?.dappyID))
   const purchasedTemplate = userDappies.some(d => d?.id === dappy?.id)
+  // console.log(`templateID: ${id}, dappyID: ${dappyID}`)
   const ListOnMarketButton = () => (
     <div
       onClick={() => listDappyOnMarket(dappyID, id, name, dna, listingPrice)}
