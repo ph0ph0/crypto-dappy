@@ -9,15 +9,19 @@ import { sortDappies } from "../utils/sortDappies.utils";
 import { mutate, query, tx } from "@onflow/fcl";
 import { userDappyReducer } from "../reducer/userDappyReducer";
 
-export default function useMarket(user, userDappies, fetchUserDappies) {
-  const [marketState, dispatchMarket] = useReducer(marketReducer, {
+import { useUser } from '../providers/UserProvider';
+import { useAuth } from '../providers/AuthProvider';
+
+export default function useMarket() {
+  const [marketState, dispatch] = useReducer(marketReducer, {
     loadingMarketDappies: false,
     loadingUnlistedDappies: false,
     error: false,
     marketDappies: [],
     unlistedDappies: [],
   });
-  const [dappyState, dispatchUserDappies] = useReducer(userDappyReducer)
+  const { userDappies, fetchUserDappies } = useUser();
+  const { user } = useAuth();
   const [firstLoadDone, setFirstLoadDone] = useState(false);
 
   const queryBackend = async () => {
@@ -34,8 +38,8 @@ export default function useMarket(user, userDappies, fetchUserDappies) {
 
   const fetchMarketDappies = async () => {
     if (!firstLoadDone) {
-      dispatchMarket({ type: "PROCESSING MARKETDAPPIES" });
-      dispatchMarket({ type: "PROCESSING UNLISTEDDAPPIES" });
+      dispatch({ type: "PROCESSING MARKETDAPPIES" });
+      dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
     }
     setFirstLoadDone(true);
     await updateMarket()
@@ -57,10 +61,14 @@ export default function useMarket(user, userDappies, fetchUserDappies) {
   const updateMarket = async () => {
     // uD, dappyIDs, APIresponse
     console.log(`&&&&&&&&UPDATING MARKET`);
+    console.log(`userDappies1: ${JSON.stringify(userDappies)}`);
     let identifierDictionary = await getDappyIDsToListingIDs();
+    console.log(`userDappies2: ${JSON.stringify(userDappies)}`);
     const dappiesForMarket = await queryBackend();
+    console.log(`userDappies3: ${JSON.stringify(userDappies)}`);
     await fetchUserDappies()
     console.log(`DappyIDs dictionary: ${JSON.stringify(identifierDictionary)}`);
+    console.log(`userDappies passed to sortDappies: ${JSON.stringify(userDappies)}`);
     const { unlistedDappies, marketDappies } = sortDappies({
       userDappies,
       identifierDictionary,
@@ -81,11 +89,11 @@ export default function useMarket(user, userDappies, fetchUserDappies) {
       return new DappyClass(d?.id, d?.dna, d?.name, d?.price, d?.dappyID);
     });
     console.log(`DONE!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!`)
-    dispatchMarket({
+    dispatch({
       type: "UPDATE MARKETDAPPIES",
       payload: marketDappiesObjects,
     });
-    dispatchMarket({
+    dispatch({
       type: "UPDATE UNLISTEDDAPPIES",
       payload: unlistedDappiesObjects,
     });
@@ -93,7 +101,6 @@ export default function useMarket(user, userDappies, fetchUserDappies) {
 
   return {
     ...marketState,
-    ...dappyState,
     fetchMarketDappies,
     updateMarket,
   };

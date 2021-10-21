@@ -6,8 +6,6 @@ import { useAuth } from './AuthProvider';
 const MarketContext = createContext()
 
 export const MarketProvider = ({children}) => {
-  const { userDappies, fetchUserDappies } = useUser();
-  const { user } = useAuth();
   const {
     loadingMarketDappies,
     loadingUnlistedDappies,
@@ -16,7 +14,7 @@ export const MarketProvider = ({children}) => {
     unlistedDappies,
     fetchMarketDappies,
     updateMarket,
-  } = useMarket(user, userDappies, fetchUserDappies);
+  } = useMarket();
 
   return (
     <MarketContext.Provider value={{

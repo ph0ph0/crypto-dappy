@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useCallback } from "react";
 import { mutate, query, tx } from "@onflow/fcl";
 
 import { LIST_USER_DAPPIES } from "../flow/list-user-dappies.script";
@@ -9,13 +9,14 @@ import DappyClass from "../utils/DappyClass";
 
 export default function useUserDappies(user, collection, getFUSDBalance) {
   const [state, dispatch] = useReducer(userDappyReducer, {
-    oading: false,
+    loading: false,
     error: false,
     data: [],
   });
   const { addTx, runningTxs } = useTxs();
 
   const fetchUserDappies = async () => {
+    console.log(`!!!!!!!!!!!Fetching user dappies`)
     dispatch({ type: "PROCESSING" });
     try {
       let res = await query({
@@ -35,6 +36,7 @@ export default function useUserDappies(user, collection, getFUSDBalance) {
         );
         mappedDappies.push(dappy);
       }
+      console.log(`userDappies that were fetched!: ${JSON.stringify(mappedDappies)}`)
       dispatch({ type: "SUCCESS", payload: mappedDappies });
     } catch (err) {
       dispatch({ type: "ERROR" });
@@ -42,7 +44,9 @@ export default function useUserDappies(user, collection, getFUSDBalance) {
   };
 
   useEffect(() => {
-    fetchUserDappies();
+    (async () => {
+      await fetchUserDappies();
+    })()
     //eslint-disable-next-line
   }, []);
 
