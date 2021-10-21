@@ -8,11 +8,10 @@ import Dappy from './Dappy'
 import './DappyCard.css'
 
 export default function DappyCard({ dappy, store, designer, listed, market}) {
-  console.log(`DAPPY LOADING!!!!: ${dappy.dappyID}`)
-  const { userDappies, mintDappy, fetchUserDappies } = useUser()
+  const { user, userDappies, mintDappy, fetchUserDappies } = useUser()
   const history = useHistory()
   const {updateMarket} = useMarketContext()
-  const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy(fetchUserDappies, updateMarket)
+  const {buyDappyOnMarket, removeDappyFromMarket, listDappyOnMarket, updatePrice, listingPrice} = useMarketDappy(fetchUserDappies)
   const { id, dna, image, name, rarity, price, type, dappyID, listingResourceID, storefrontAddress } = dappy
   const owned = userDappies.some(d => parseInt(d?.dappyID) === parseInt(dappy?.dappyID))
   const purchasedTemplate = userDappies.some(d => d?.id === dappy?.id)

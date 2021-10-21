@@ -35,13 +35,12 @@ export default function useMarket() {
     if (!firstLoadDone) {
       dispatch({ type: "PROCESSING MARKETDAPPIES" });
       dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
+      setFirstLoadDone(true);
     }
-    setFirstLoadDone(true);
     await updateMarket(user, userDappies)
   };
 
   const getDappyIDsToListingIDs = async (user) => {
-    console.log(`Getting dappyIDsToListingIDs...`)
     try {
       let res = await query({
         cadence: GET_DAPPYIDS_TO_LISTINGIDS,
@@ -57,12 +56,8 @@ export default function useMarket() {
   const updateMarket = async (user, userDappies) => {
     // uD, dappyIDs, APIresponse
     console.log(`&&&&&&&&UPDATING MARKET`);
-    console.log(`userDappies1: ${JSON.stringify(userDappies)}`);
     let identifierDictionary = await getDappyIDsToListingIDs(user);
-    console.log(`userDappies2: ${JSON.stringify(userDappies)}`);
     const dappiesForMarket = await queryBackend();
-    console.log(`userDappies3: ${JSON.stringify(userDappies)}`);
-    console.log(`DappyIDs dictionary: ${JSON.stringify(identifierDictionary)}`);
     console.log(`userDappies passed to sortDappies: ${JSON.stringify(userDappies)}`);
     const { unlistedDappies, marketDappies } = sortDappies({
       userDappies,

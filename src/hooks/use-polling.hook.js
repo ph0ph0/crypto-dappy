@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-export const usePolling = (callback, delay) => {
+export const usePolling = (callback, delay, ...args) => {
   const savedCallback = useRef();
 
   // Remember the latest callback
@@ -9,7 +9,7 @@ export const usePolling = (callback, delay) => {
 
   useEffect(() => {
     const tick = () => {
-      savedCallback.current();
+      savedCallback.current(...args);
     };
     if (delay !== null) {
       const id = setInterval(tick, delay);

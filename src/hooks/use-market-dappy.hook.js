@@ -9,7 +9,7 @@ import DappyClass from "../utils/DappyClass";
 import { CHECK_RESOURCES } from "../flow/check-resources.script";
 import { BUY_DAPPY_ON_MARKET } from "../flow/market/buy-dappy-on-market.tx";
 
-export default function useMarketDappy(fetchUserDappies, updateMarket) {
+export default function useMarketDappy(fetchUserDappies) {
   const [state, dispatch] = useReducer(marketDappyReducer, {
     loading: false,
     error: false,
@@ -66,7 +66,7 @@ export default function useMarketDappy(fetchUserDappies, updateMarket) {
       setListingPrice("");
       console.log(`Success!`);
       dispatch({ type: "SUCCESS" });
-      updateMarket()
+      fetchUserDappies()
     } catch (error) {
       console.log(`Error: ${error}`);
       dispatch({ type: "ERROR" });
@@ -90,9 +90,7 @@ export default function useMarketDappy(fetchUserDappies, updateMarket) {
       await tx(res).onceSealed();
       console.log(`Success!`);
       dispatch({ type: "SUCCESS" });
-      console.log(`Now updating market...`)
-      updateMarket()
-      console.log(`Done updating`)
+      fetchUserDappies()
     } catch (error) {
       console.log(`Error: ${error}`);
       dispatch({ type: "ERROR" });
@@ -117,7 +115,7 @@ export default function useMarketDappy(fetchUserDappies, updateMarket) {
       await tx(res).onceSealed();
       console.log(`Success!`);
       dispatch({ type: "SUCCESS" });
-      updateMarket()
+      fetchUserDappies()
     } catch (error) {
       console.log(`Error: ${error}`);
       dispatch({ type: "ERROR" });

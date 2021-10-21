@@ -23,25 +23,22 @@ export default function Market() {
     unlistedDappies,
     fetchMarketDappies,
   } = useMarketContext();
-  const { loading, userDappies } = useUser();
+  const { loading, userDappies, fetchUserDappies } = useUser();
   const { user } = useAuth();
 
   const loadMarket= async () => {
     console.log(`!!!!!!!Loading market!!!!!!!`)
-    console.log(`LOADING?: ${loading}`)
-    console.log(`$$$$$$$$$$$USER DAPPIES$$$$$$$$$$: ${JSON.stringify(userDappies)}`)
     if (!loading) {
       await fetchMarketDappies(user, userDappies)
     }
   }
 
   useEffect(() => {
-    console.log(`@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!`)
     loadMarket()
-
   }, [loading]);
 
-  // usePolling(fetchMarketDappies, 6000)
+
+  // usePolling(fetchUserDappies, 6000)
 
   return (
     <>
