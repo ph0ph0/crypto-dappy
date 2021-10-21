@@ -15,9 +15,11 @@ export default function useUserDappies(user, collection, getFUSDBalance) {
   });
   const { addTx, runningTxs } = useTxs();
 
+  console.log(`LOADING in useUserDappies hook: ${state.loading}`)
+
   const fetchUserDappies = async () => {
-    console.log(`!!!!!!!!!!!Fetching user dappies`)
     dispatch({ type: "PROCESSING" });
+    console.log(`!!!!!!!!!!!Fetching user dappies, loading?: ${state.loading}`)
     try {
       let res = await query({
         cadence: LIST_USER_DAPPIES,
@@ -38,6 +40,7 @@ export default function useUserDappies(user, collection, getFUSDBalance) {
       }
       console.log(`userDappies that were fetched!: ${JSON.stringify(mappedDappies)}`)
       dispatch({ type: "SUCCESS", payload: mappedDappies });
+      console.log(`LOADED I FUCKING THINK: ${JSON.stringify(state.data)}`)
     } catch (err) {
       dispatch({ type: "ERROR" });
     }

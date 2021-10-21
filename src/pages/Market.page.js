@@ -7,7 +7,9 @@ import ErrorLoadingRenderer from "../components/ErrorLoadingRenderer";
 
 import { useMarketContext } from "../providers/MarketProvider";
 import { usePolling } from "../hooks/use-polling.hook";
-import { useUser } from "../providers/UserProvider";
+
+import { useUser } from '../providers/UserProvider';
+import { useAuth } from '../providers/AuthProvider';
 
 
 
@@ -21,12 +23,23 @@ export default function Market() {
     unlistedDappies,
     fetchMarketDappies,
   } = useMarketContext();
+  const { loading, userDappies } = useUser();
+  const { user } = useAuth();
+
+  const loadMarket= async () => {
+    console.log(`!!!!!!!Loading market!!!!!!!`)
+    console.log(`LOADING?: ${loading}`)
+    console.log(`$$$$$$$$$$$USER DAPPIES$$$$$$$$$$: ${JSON.stringify(userDappies)}`)
+    if (!loading) {
+      await fetchMarketDappies(user, userDappies)
+    }
+  }
 
   useEffect(() => {
     console.log(`@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!@£$%&^*($£%^&*()£$%^&*()£$^%Calling useEffect on marketPage!`)
-    fetchMarketDappies();
-    //eslint-disable-next-line
-  }, []);
+    loadMarket()
+
+  }, [loading]);
 
   // usePolling(fetchMarketDappies, 6000)
 

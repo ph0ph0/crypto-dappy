@@ -9,7 +9,7 @@ import DappyClass from "../utils/DappyClass";
 import { CHECK_RESOURCES } from "../flow/check-resources.script";
 import { BUY_DAPPY_ON_MARKET } from "../flow/market/buy-dappy-on-market.tx";
 
-export default function useMarketDappy(updateMarket) {
+export default function useMarketDappy(fetchUserDappies, updateMarket) {
   const [state, dispatch] = useReducer(marketDappyReducer, {
     loading: false,
     error: false,
@@ -74,6 +74,7 @@ export default function useMarketDappy(updateMarket) {
   };
 
   const removeDappyFromMarket = async (listingResourceID) => {
+    console.log(`Remove dappy`);
     // TODO: Update dappy state
     if (listingResourceID === 0) return;
     dispatch({ type: "LOADING" });
@@ -89,15 +90,13 @@ export default function useMarketDappy(updateMarket) {
       await tx(res).onceSealed();
       console.log(`Success!`);
       dispatch({ type: "SUCCESS" });
+      console.log(`Now updating market...`)
       updateMarket()
+      console.log(`Done updating`)
     } catch (error) {
       console.log(`Error: ${error}`);
       dispatch({ type: "ERROR" });
     }
-
-
-
-    console.log(`Remove dappy`);
   };
 
   const buyDappyOnMarket = async (listingResourceID, storefrontAddress) => {

@@ -9,9 +9,6 @@ import { sortDappies } from "../utils/sortDappies.utils";
 import { mutate, query, tx } from "@onflow/fcl";
 import { userDappyReducer } from "../reducer/userDappyReducer";
 
-import { useUser } from '../providers/UserProvider';
-import { useAuth } from '../providers/AuthProvider';
-
 export default function useMarket() {
   const [marketState, dispatch] = useReducer(marketReducer, {
     loadingMarketDappies: false,
@@ -20,8 +17,6 @@ export default function useMarket() {
     marketDappies: [],
     unlistedDappies: [],
   });
-  const { userDappies, fetchUserDappies } = useUser();
-  const { user } = useAuth();
   const [firstLoadDone, setFirstLoadDone] = useState(false);
 
   const queryBackend = async () => {
@@ -36,16 +31,17 @@ export default function useMarket() {
     }
   };
 
-  const fetchMarketDappies = async () => {
+  const fetchMarketDappies = async (user, userDappies) => {
     if (!firstLoadDone) {
       dispatch({ type: "PROCESSING MARKETDAPPIES" });
       dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
     }
     setFirstLoadDone(true);
-    await updateMarket()
+    await updateMarket(user, userDappies)
   };
 
-  const getDappyIDsToListingIDs = async () => {
+  const getDappyIDsToListingIDs = async (user) => {
+    console.log(`Getting dappyIDsToListingIDs...`)
     try {
       let res = await query({
         cadence: GET_DAPPYIDS_TO_LISTINGIDS,
@@ -58,15 +54,14 @@ export default function useMarket() {
     }
   };
 
-  const updateMarket = async () => {
+  const updateMarket = async (user, userDappies) => {
     // uD, dappyIDs, APIresponse
     console.log(`&&&&&&&&UPDATING MARKET`);
     console.log(`userDappies1: ${JSON.stringify(userDappies)}`);
-    let identifierDictionary = await getDappyIDsToListingIDs();
+    let identifierDictionary = await getDappyIDsToListingIDs(user);
     console.log(`userDappies2: ${JSON.stringify(userDappies)}`);
     const dappiesForMarket = await queryBackend();
     console.log(`userDappies3: ${JSON.stringify(userDappies)}`);
-    await fetchUserDappies()
     console.log(`DappyIDs dictionary: ${JSON.stringify(identifierDictionary)}`);
     console.log(`userDappies passed to sortDappies: ${JSON.stringify(userDappies)}`);
     const { unlistedDappies, marketDappies } = sortDappies({
