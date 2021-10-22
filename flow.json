@@ -33,10 +33,5 @@
 			"key": "ae1b44c0f5e8f6992ef2348898a35e50a8b0b9684000da8b1dade1b3bcd6ebee"
 		},
 		"testnet-account": { "fromFile": "./userkeys.json" }
-	},
-	"deployments": {
-		"testnet": {
-			"testnet-account": ["DappyContract"]
-		}
 	}
 }
