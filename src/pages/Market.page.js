@@ -60,7 +60,6 @@ export default function Market() {
       />
       <h4 className="app__subheader">Your Unlisted Dappies</h4>
       <ErrorLoadingRenderer loading={loadingUnlistedDappies} error={error}>
-        {/* //   TODO: Remove below array functions on unlistedDappies */}
         <DappyList dappies={unlistedDappies} market />
       </ErrorLoadingRenderer>
       <hr className="app__hr"></hr>

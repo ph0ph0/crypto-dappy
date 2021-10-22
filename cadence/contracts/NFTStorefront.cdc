@@ -1,6 +1,5 @@
 import FungibleToken from "./FungibleToken.cdc"
 import NonFungibleToken from "./NonFungibleToken.cdc"
-// TODO: DELETE THIS!
 // NFTStorefront
 //
 // A general purpose sale support contract for Flow NonFungibleTokens.
@@ -190,6 +189,7 @@ pub contract NFTStorefront {
         //
         pub fun getDetails(): ListingDetails
     }
+
 
 
     // Listing

@@ -71,7 +71,6 @@ export default function useMarketDappy(fetchUserDappies) {
 
   const removeDappyFromMarket = async (listingResourceID) => {
     console.log(`Remove dappy from market: ${listingResourceID}`);
-    // TODO: Update dappy state
     if (listingResourceID === 0) return;
     dispatch({ type: "LOADING" });
     try {
@@ -95,7 +94,6 @@ export default function useMarketDappy(fetchUserDappies) {
 
   const buyDappyOnMarket = async (listingResourceID, storefrontAddress) => {
     console.log(`Buy dappy on market: ${listingResourceID}, storefrontAddress: ${storefrontAddress}`);
-    // TODO: Update dappy state
     if (listingResourceID === 0) return;
     dispatch({ type: "LOADING" });
     try {

@@ -1,5 +1,4 @@
 /**
-// TODO: DELETE THIS!
 ## The Flow Non-Fungible Token standard
 
 ## `NonFungibleToken` contract interface

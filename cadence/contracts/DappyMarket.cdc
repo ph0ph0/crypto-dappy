@@ -3,7 +3,8 @@ import FungibleToken from 0x9a0766d93b6608b7
 
 // DappyMarket
 //
-// A sale support contract for Dappies, based on the NFTStorefront contract (https://github.com/onflow/nft-storefront).
+// A sale support contract for Dappies, based on the Official Flow NFTStorefront contract (https://github.com/onflow/nft-storefront).
+// The NFTStorefront contract has also been included in this folder for reference.
 // For another example of a modified NFTStorefront contract, see (https://github.com/versus-flow/versus-contracts/blob/main/contracts/Marketplace.cdc)
 // 
 // Each account that wants to list Dappies for sale installs a Storefront,
@@ -14,16 +15,17 @@ import FungibleToken from 0x9a0766d93b6608b7
 // Note that a Listing is a representation of the Dappy, and not the actual
 // Dappy resource itself. 
 //
-// Each Listing can have one or more "cut"s of the sale price that
+// Each Listing can have one or more "cuts" of the sale price that
 // goes to one or more addresses. Cuts can be used to pay listing fees
 // or other considerations.
-// Each NFT may be listed in one or more Listings, the validity of each
-// Listing can easily be checked.
+// Unlike the NFTStorefront contract, each Dappy (equivalent to an NFT)
+//  can only be associated with one Listing (1 Listing per Dappy).
 // 
-// The CryptoDappies frontend populates the Market page by employing an
-// AWS serverless tech stack. For more information, see here: (TODO:)
+// The CryptoDappies application populates the Market page by employing an
+// AWS serverless tech stack. For more information, see here: 
+// (https://github.com/ph0ph0/FlowEventMonitor)
 // 
-// Marketplaces and other aggregators can watch for Listing events
+// Marketplaces and other aggregators can watch for DappyListing events
 // and list Dappies of interest.
 //
 // In order to enhance this contract as a learning aid, here are the differences
@@ -31,20 +33,20 @@ import FungibleToken from 0x9a0766d93b6608b7
 // - The DappyContract.cdc does not employ the NonfungibleToken standard 
 //   (https://github.com/onflow/flow-nft/blob/master/contracts/NonFungibleToken.cdc). 
 //   As such, it does not have access to the restricted types of the NFT standard contract,
-//   and so all restricted types had to be updated to the equivalent in the DappyContract.
+//   and so all restricted types are those found in the DappyContract.
 //   For example, in the NFTStorefront contract, on line 207, the `nftProviderCapability` 
 //   constant has a restricted type of {NonFungibleToken.Provider, NonFungibleToken.CollectionPublic}.
 //   The equivalent in the DappyMarket contract is {DappyContract.Provider, DappyContract.CollectionPublic}.
 // - Where approporiate, the term 'NFT' was replaced with 'Dappy'.
 // - The term 'Listing' was replaced with 'DappyListing'. This was to clarify that a Listing resource
 //   in the original NFTStorefront contract is not quite the same as a DappyListing (different properties).
-// - Events TODO: 
-//      - dappyID, dappyName and dappyDNA were added to the DappyListingAvailable (ListingAvailable equivalent) event.
+// - Events:
+//      - dappyID, templateID, name, and dna were added to the DappyListingAvailable (ListingAvailable equivalent) event.
 //        nftType was removed, since the type will always be DappyContract.Dappy
-// - Listing resource/ListingDetails struct TODO:
-//      - dappyID, dappyName and dappyDNA were added to the ListingDetails struct. nftType was removed, since
+// - Listing resource/ListingDetails struct:
+//      - dappyID, templateID, name, and dna were added to the ListingDetails struct. nftType was removed, since
 //        the type will always be DappyContract.Dappy.
-//      - nftProviderCapability changed to dappyProviderCapability, and the restricted types updated.
+//      - nftProviderCapability was changed to dappyProviderCapability, and the restricted types updated.
 //      - In the Listing resource of the NFTStorefront contract, there is a borrowNFT() method associated with
 //        the CollectionPublic and Provider interfaces in the NonFungibleToken standard (L213). This is used to check that the user
 //        still owns the NFT in question. It achieves this through calling the .borrowNFT() function defined 
@@ -52,35 +54,34 @@ import FungibleToken from 0x9a0766d93b6608b7
 //        we can use the listDappies() method of the DappyContract CollectionPublic interface to achieve the 
 //        same outcome (DappyContract, L191). Since we are not borrowing a reference to the Dappy (the listDappies() method returns a 
 //        {UInt64: DappyContract.Template} dictionary, so this is not possible anyway), the name of this method
-//         was changed to `ownsDappy()`. It returns a boolean that indicates if the account owns the Dappy. To 
+//        was changed to `ownsDappy()`. It returns a boolean that indicates if the account owns the Dappy. To 
 //        achieve the same effect, the getIDs() method of the DappyContract CollectionPublic (L187) could have also been
 //        used. However, this returns an array, and dictionary lookup using the ID would be more efficient than
 //        iterating through an array of IDs.
-//      - The assertion at the end of the DappyListing initialization function was updated to use listDappies() (L380).
+//      - The assertion at the end of the DappyListing initialization function was updated to use listDappies() (L413).
 // - Storefront resource/interfaces:
 //      - A dictionary mapping the DappyIDs to the ListingIDs called dappyIDsToListingIDs was added to the Storefront resource. This was necessary
 //        to prevent multiple Listings being created for the same Dappy. Allowing multiple Listings referencing the same NFT was an intentional feature
 //        of the NFTStorefront contract (https://github.com/onflow/nft-storefront/issues/21#issuecomment-937342247), 
-//        but was removed in the DappyContract to prevent spamming and ghost Listings.A getDappyIDs() function was added to the 
+//        but was removed in the DappyContract to prevent spamming and ghost Listings. A getDappyIDs() function was added to the 
 //        StorefrontPublic interface and thus to the Storefront resource. Using these additions, it was now possible
 //        to check if a Dappy had already been listed. This was achieved in the precondition of the createListing()
-//        function in the Storefront resource. If the DappyID exists in the dappyIDsToListingIDs dictionary, then the
+//        function in the Storefront resource (L476). If the DappyID exists in the dappyIDsToListingIDs dictionary, then the
 //        function is aborted. A dappyID is added to the dictionary during the Listing creation process in createListing(),
 //        and removed from the dictionary in removeListing() and cleanup(). It is important to note that the NFTStorefront
 //        contract allows Listings to remain in a Storefront after they have been purchased, their `purchased` Bool flag
 //        set to true (see ListingDetails struct and purchase() function in Listing resource). This is also the case with the DappyMarket contract.
-//        Thus, it's possible that
-//        a DappyListing could be purchased, but remain in the Storefront resource (with its `purchased` property set to true). 
-//        This should not be an issue, because if
-//        the DappyListing was purchased, then the underlying Dappy will have been moved to the new owner and thus cannot
-//        be relisted by the previous owner, since they no longer own the Dappy. 
+//        Thus, it's possible that a DappyListing could be purchased, but remain in the Storefront resource
+//        with its `purchased` property set to true). This should not be an issue, because if the DappyListing was purchased, 
+//        then the underlying Dappy will have been moved to the new owner and thus cannot be relisted by the previous owner, since they no longer own the Dappy. 
+//        The 'buy' transaction in this tutorial has been created with this in mind, and calls the cleanup() function at the end.
 //      - A getDappyToResourceIDs() function was added to the StorefrontPublic interface and the Storefront resource. This returns the keys of the 
 //        dappyIDsToResourceIDs dictionary.
 //      - When a Listing is created in createListing, we add the dappyID to the dappyIDToListingIDs dictionary.
 //      - When a DappyListing is destroyed in removeListing() and cleanup(), it is also removed from the dappyIDsToListingIDs dictionary.
 //      - Added the dappyIDToListingIDs dictionary initialization to the Storefront resource init function.
-//      - NOTE: Will probs have to add in a function that converts dappyIDs to ListingResourceIDs. This is because the removeListing() call
-//        takes a listingResourceID, which a Dappy doesn't posses. 
+
+
 
 
 pub contract DappyMarket {

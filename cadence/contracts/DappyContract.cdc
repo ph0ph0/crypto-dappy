@@ -1,7 +1,4 @@
-
-// TODO: Switch back to relative path before PR:
-// import FungibleToken from "./FungibleToken.cdc"
-import FungibleToken from 0x9a0766d93b6608b7
+import FungibleToken from "./FungibleToken.cdc"
 
 pub contract DappyContract {
   access(self) var templates: {UInt32: Template}
@@ -309,15 +306,14 @@ pub contract DappyContract {
     return el.templates.contains(templateID)
   }
 
-  // TODO: Change the paths back!
   init() {
     self.templates = {}
     self.totalDappies = 0
     self.nextTemplateID = 1
     self.nextFamilyID = 1
-    self.CollectionStoragePath = /storage/DappyCollection_X
-    self.CollectionPublicPath = /public/DappyCollectionPublic_X
-    self.AdminStoragePath = /storage/DappyAdmin_X
+    self.CollectionStoragePath = /storage/DappyCollection
+    self.CollectionPublicPath = /public/DappyCollectionPublic
+    self.AdminStoragePath = /storage/DappyAdmin
     self.account.save<@Admin>(<- create Admin(), to: self.AdminStoragePath)
     self.families <- {}
   }
