@@ -1,8 +1,8 @@
 export const BUY_DAPPY_ON_MARKET = `
-import DappyMarket from 0x29e893174dd9b963
-import DappyContract from 0x29e893174dd9b963
-import FUSD from 0xe223d8a629e49c68
-import FungibleToken from 0x9a0766d93b6608b7
+import DappyMarket from 0xDappyMarket
+import DappyContract from 0xDappyContract
+import FUSD from 0xFUSD
+import FungibleToken from 0xFungibleToken
 
 transaction(listingResourceID: UInt64, storefrontAddress: Address) {
 

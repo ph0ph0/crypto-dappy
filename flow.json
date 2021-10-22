@@ -19,7 +19,8 @@
 				"testnet": "9a0766d93b6608b7",
 				"emulator": "ee82856bf20e2aa6"
 			}
-		}
+		},
+		"DappyMarket": "./cadence/contracts/DappyMarket"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",

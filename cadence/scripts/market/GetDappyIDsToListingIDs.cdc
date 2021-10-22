@@ -1,6 +1,6 @@
 // Returns a dictionary mapping DappyIDsToListingIDs that the user owns.
 
-import DappyMarket from 0x29e893174dd9b963
+import DappyMarket from "../../contracts/DappyMarket.cdc"
 
 
 pub fun main(addr: Address): {UInt64: UInt64} {
