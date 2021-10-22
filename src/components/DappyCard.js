@@ -15,7 +15,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
   const purchasedTemplate = userDappies.some(d => d?.id === dappy?.id)
   const ListOnMarketButton = () => (
     <div
-      onClick={() => listDappyOnMarket()}
+      onClick={() => listDappyOnMarket(dappyID, id, name, dna, listingPrice)}
       className='btn btn-bordered btn-light btn-dappy'>
       <i className='ri-list-unordered btn-icon'></i>LIST 
     </div>
@@ -23,7 +23,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
 
   const RemoveFromMarketButton = () => (
     <div
-      onClick={() => removeDappyFromMarket()}
+      onClick={() => removeDappyFromMarket(listingResourceID)}
       className='btn btn-bordered btn-light btn-dappy'>
       <i className='ri-close-line btn-icon'></i>REMOVE
     </div>
@@ -31,7 +31,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
 
   const BuyFromMarketButton = () => (
     <div
-      onClick={() => buyDappyOnMarket()}
+      onClick={() => buyDappyOnMarket(listingResourceID, storefrontAddress)}
       className='btn btn-bordered btn-light btn-dappy'>
       <i className='ri-store-2-line btn-icon'></i>
       {parseInt(price)} FUSD
