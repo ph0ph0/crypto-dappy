@@ -7,8 +7,6 @@ import { useUser } from '../providers/UserProvider'
 export default function Collection() {
   const { collection, createCollection, deleteCollection, userDappies } = useUser()
 
-  console.log(`CollectionDappies: ${JSON.stringify(userDappies)}`)
-
   return (
     <>
       <Header

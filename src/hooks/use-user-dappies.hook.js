@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useCallback } from "react";
+import { useEffect, useReducer} from "react";
 import { mutate, query, tx } from "@onflow/fcl";
 
 import { LIST_USER_DAPPIES } from "../flow/list-user-dappies.script";

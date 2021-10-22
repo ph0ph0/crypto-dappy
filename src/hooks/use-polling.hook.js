@@ -17,6 +17,6 @@ export const usePolling = (callback, delay, ...args) => {
         clearInterval(id);
       };
     }
-  }, [callback, delay]);
+  }, [callback, delay, args]);
 };
 

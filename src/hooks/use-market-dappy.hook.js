@@ -1,12 +1,9 @@
-import { useEffect, useReducer, useState, useRef } from "react";
-import { mutate, query, tx } from "@onflow/fcl";
+import { useReducer, useState } from "react";
+import { mutate, tx } from "@onflow/fcl";
 import { useTxs } from "../providers/TxProvider";
 import { marketDappyReducer } from "../reducer/marketDappyReducer";
-import { generateDappies } from "../utils/dappies.utils";
 import { LIST_DAPPY_ON_MARKET } from "../flow/market/list-dappy-on-market.tx";
 import { REMOVE_DAPPY_FROM_MARKET } from "../flow/market/remove-dappy-from-market.tx";
-import DappyClass from "../utils/DappyClass";
-import { CHECK_RESOURCES } from "../flow/check-resources.script";
 import { BUY_DAPPY_ON_MARKET } from "../flow/market/buy-dappy-on-market.tx";
 
 export default function useMarketDappy(fetchUserDappies) {
@@ -36,17 +33,16 @@ export default function useMarketDappy(fetchUserDappies) {
     dna,
     price
   ) => {
+    console.log(`List dappy on market: ${dappyID}`)
     const dappyPrice = parseFloat(price).toFixed(2).toString();
     const dappyID_int = parseInt(dappyID);
-    if (listingPrice == "") {
+    if (listingPrice === "") {
       alert("Please provide a listing price");
       return;
     }
     dispatch({ type: "LOADING" });
     if (runningTxs) {
-      alert(
-        "Transactions are still running. Please wait for them to finish first."
-      );
+      alert("Transactions are still running. Please wait for them to finish first.");
       return;
     }
     try {
@@ -74,7 +70,7 @@ export default function useMarketDappy(fetchUserDappies) {
   };
 
   const removeDappyFromMarket = async (listingResourceID) => {
-    console.log(`Remove dappy`);
+    console.log(`Remove dappy from market: ${listingResourceID}`);
     // TODO: Update dappy state
     if (listingResourceID === 0) return;
     dispatch({ type: "LOADING" });

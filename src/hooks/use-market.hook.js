@@ -1,13 +1,11 @@
-import { useReducer, useState, useCallback } from "react";
+import { useReducer, useState } from "react";
 import { marketReducer } from "../reducer/marketReducer";
 import DappyClass from "../utils/DappyClass";
 import axios from "axios";
-import { GET_DAPPYIDS_TO_LISTINGIDS } from "../flow/market/GetDappyIDsToListingsIDs.script";
-import { LIST_USER_DAPPIES } from "../flow/list-user-dappies.script";
+import { GET_DAPPYIDS_TO_LISTINGIDS } from "../flow/market/dappyIDs-to-listingIDs.script";
 import { sortDappies } from "../utils/sortDappies.utils";
 
-import { mutate, query, tx } from "@onflow/fcl";
-import { userDappyReducer } from "../reducer/userDappyReducer";
+import { query } from "@onflow/fcl";
 
 export default function useMarket() {
   const [marketState, dispatch] = useReducer(marketReducer, {
@@ -24,20 +22,20 @@ export default function useMarket() {
       const res = await axios.get(
         "https://1c4mgqsjt2.execute-api.us-east-1.amazonaws.com/test/"
       );
-      console.log(`response: ${JSON.stringify(res.data.body.Items)}`);
+      console.log(`API response: ${JSON.stringify(res.data.body.Items)}`);
       return res?.data?.body?.Items;
     } catch (error) {
       throw new Error(`Error querying backend: ${error}`);
     }
   };
 
-  const fetchMarketDappies = async (user, userDappies) => {
+  const updateMarket = async (user, userDappies) => {
     if (!firstLoadDone) {
       dispatch({ type: "PROCESSING MARKETDAPPIES" });
       dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
       setFirstLoadDone(true);
     }
-    await updateMarket(user, userDappies)
+    await fetchMarketDappies(user, userDappies)
   };
 
   const getDappyIDsToListingIDs = async (user) => {
@@ -53,7 +51,7 @@ export default function useMarket() {
     }
   };
 
-  const updateMarket = async (user, userDappies) => {
+  const fetchMarketDappies = async (user, userDappies) => {
     // uD, dappyIDs, APIresponse
     console.log(`&&&&&&&&UPDATING MARKET`);
     let identifierDictionary = await getDappyIDsToListingIDs(user);
@@ -78,7 +76,6 @@ export default function useMarket() {
     let unlistedDappiesObjects = Object.values(unlistedDappies).map((d) => {
       return new DappyClass(d?.id, d?.dna, d?.name, d?.price, d?.dappyID);
     });
-    console.log(`DONE!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!DONE!!!!!!!!!!!!!!`)
     dispatch({
       type: "UPDATE MARKETDAPPIES",
       payload: marketDappiesObjects,

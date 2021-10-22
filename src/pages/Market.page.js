@@ -5,40 +5,43 @@ import DappyList from "../components/DappyList";
 import Header from "../components/Header";
 import ErrorLoadingRenderer from "../components/ErrorLoadingRenderer";
 
-import { useMarketContext } from "../providers/MarketProvider";
-import { usePolling } from "../hooks/use-polling.hook";
+import useMarket from "../hooks/use-market.hook"
 
 import { useUser } from '../providers/UserProvider';
 import { useAuth } from '../providers/AuthProvider';
+import { usePolling } from "../hooks/use-polling.hook";
 
 
 
 
 export default function Market() {
+
+  const { loading, userDappies, fetchUserDappies } = useUser();
+  const { user } = useAuth();
+
   const {
     loadingMarketDappies,
     loadingUnlistedDappies,
     error,
     marketDappies,
     unlistedDappies,
-    fetchMarketDappies,
-  } = useMarketContext();
-  const { loading, userDappies, fetchUserDappies } = useUser();
-  const { user } = useAuth();
+    updateMarket,
+  } = useMarket();
 
   const loadMarket= async () => {
     console.log(`!!!!!!!Loading market!!!!!!!`)
     if (!loading) {
-      await fetchMarketDappies(user, userDappies)
+      await updateMarket(user, userDappies)
     }
   }
 
   useEffect(() => {
     loadMarket()
+    //eslint-disable-next-line
   }, [loading]);
 
 
-  // usePolling(fetchUserDappies, 6000)
+  usePolling(fetchUserDappies, 6000)
 
   return (
     <>

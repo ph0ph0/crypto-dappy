@@ -12,15 +12,9 @@ transaction(listingResourceID: UInt64, storefrontAddress: Address) {
 
     prepare(acct: AuthAccount) {
 
-        if (getAccount(storefrontAddress).getCapability<&DappyMarket.Storefront{DappyMarket.StorefrontPublic}>(DappyMarket.StorefrontPublicPath).check()) {
             self.storefrontRef = getAccount(storefrontAddress)
-            .getCapability<&DappyMarket.Storefront{DappyMarket.StorefrontPublic}>(DappyMarket.StorefrontPublicPath)
-            .borrow()
-            ?? panic("Couldn't borrow storefront reference from account")
-        } else {
-            panic("No storefront to borrow")
-        }
-        
+                .getCapability<&DappyMarket.Storefront{DappyMarket.StorefrontPublic}>(DappyMarket.StorefrontPublicPath)
+                .borrow()!
 
         self.listingRef = self.storefrontRef.borrowListing(listingResourceID: listingResourceID)
             ?? panic("No DappyListing with that ID")

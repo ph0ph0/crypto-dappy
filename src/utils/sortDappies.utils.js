@@ -53,7 +53,6 @@ export const sortDappies = ({
       // a) Is the listingResourceID of dappy in dappiesForMarket NOT FOUND in the identifierDictionary?
       // b) Is the dappy of dappiesForMarket found in userDappies?
       //  && dappyFoundInDappyArray(userDappies, dappiesForMarket)
-      // console.log(`d: ${dappy.listingResourceID}`);
       listedOwnedDappies.push(dappiesForMarket[index]);
     } else if (
       findDappyInArray(userDappies, dappiesForMarket[index]) &&
@@ -81,7 +80,6 @@ export const sortDappies = ({
   }
   // Extracts userDappies that are not
   let uniqueUserDappies = getUniqueDappies(userDappies, dappiesForMarket);
-  // console.log(`uniqueUserDappies: ${JSON.stringify(uniqueUserDappies)}`);
 
   for (const index in userDappies) {
     // If we find a userDappy that is unique,
