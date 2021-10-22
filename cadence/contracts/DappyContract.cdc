@@ -22,7 +22,7 @@ pub contract DappyContract {
       self.templateID = templateID
       self.dna = dna
       self.name = name
-      self.price = 0.5
+      self.price = self._calculatePrice(dna: dna.length)
     }
 
     access(self) fun _calculatePrice(dna: Int): UFix64 {
