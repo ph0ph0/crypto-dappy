@@ -1,6 +1,5 @@
 export const BUY_DAPPY_ON_MARKET = `
-import DappyMarket from 0xDappyMarket
-import DappyContract from 0xDappyContract
+import DappyContract, DappyMarket from 0xDappy
 import FUSD from 0xFUSD
 import FungibleToken from 0xFungibleToken
 

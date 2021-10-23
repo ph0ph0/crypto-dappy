@@ -33,7 +33,7 @@ export default function useMarketDappy(fetchUserDappies) {
     dna,
     price
   ) => {
-    console.log(`List dappy on market: ${dappyID}`)
+    console.log(`List dappy on market: ${dappyID}, tID: ${templateID}`)
     const dappyPrice = parseFloat(price).toFixed(2).toString();
     const dappyID_int = parseInt(dappyID);
     if (listingPrice === "") {

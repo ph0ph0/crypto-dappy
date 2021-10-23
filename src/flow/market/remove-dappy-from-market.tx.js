@@ -1,7 +1,7 @@
 export const REMOVE_DAPPY_FROM_MARKET = `
 // NOTE: Add to tutorial
 
-import DappyMarket from 0xDappyMarket
+import DappyMarket from 0xDappy
 
 transaction(listingResourceID: UInt64) {
     let storefrontRef: &DappyMarket.Storefront{DappyMarket.StorefrontManager}

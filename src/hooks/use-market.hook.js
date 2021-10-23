@@ -64,7 +64,7 @@ export default function useMarket() {
     });
     let marketDappiesObjects = Object.values(marketDappies).map((d) => {
       return new DappyClass(
-        d.templateID,
+        (d?.id || d?.templateID),
         d?.dna,
         d?.name,
         d?.price,
@@ -74,7 +74,7 @@ export default function useMarket() {
       );
     });
     let unlistedDappiesObjects = Object.values(unlistedDappies).map((d) => {
-      return new DappyClass(d?.id, d?.dna, d?.name, d?.price, d?.dappyID);
+      return new DappyClass((d?.id || d?.templateID), d?.dna, d?.name, d?.price, d?.dappyID);
     });
     dispatch({
       type: "UPDATE MARKETDAPPIES",

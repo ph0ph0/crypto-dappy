@@ -1,7 +1,7 @@
 export const GET_DAPPYIDS_TO_LISTINGIDS = `
 // Returns a dictionary mapping DappyIDsToListingIDs that the user owns.
 
-import DappyMarket from 0xDappyMarket
+import DappyMarket from 0xDappy
 
 
 pub fun main(addr: Address): {UInt64: UInt64} {
