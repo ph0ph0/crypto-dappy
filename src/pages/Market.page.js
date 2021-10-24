@@ -13,9 +13,6 @@ import { useUser } from '../providers/UserProvider';
 
 export default function Market() {
 
-  // const { loading, userDappies, fetchUserDappies } = useUser();
-  // const { user } = useAuth();
-
   const {
     loadingMarketDappies,
     loadingUnlistedDappies,
@@ -26,7 +23,6 @@ export default function Market() {
 
   const { userDappies, loading } = useUser();
 
-  // usePolling(fetchUserDappies, 6000)
 
   return (
     <>

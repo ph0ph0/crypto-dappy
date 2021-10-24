@@ -11,14 +11,13 @@ export default function useMarket() {
     marketDappies: [],
     unlistedDappies: [],
   });
-  
+
   useEffect(() => {
     fetchMarketDappies()
     //eslint-disable-next-line
   }, [])
-  const fetchMarketDappies = async (user, userDappies) => {
+  const fetchMarketDappies = async () => {
     dispatch({ type: "PROCESSING MARKETDAPPIES" });
-    dispatch({ type: "PROCESSING UNLISTEDDAPPIES" });
     try {
       let res = generateDappies();
       let marketDappies = Object.values(res).map((d) => {
@@ -29,17 +28,9 @@ export default function useMarket() {
         type: "UPDATE MARKETDAPPIES",
         payload: marketDappies,
       });
+
     } catch (error) {
       console.log(error);
-      dispatch({ type: "ERROR" });
-    }
-    try {
-      let res = generateDappies();
-      let unlistedDappies = Object.values(res).map((d) => {
-        return new DappyClass(d?.templateID, d?.dna, d?.name, d?.price);
-      });
-      dispatch({ type: "UPDATE UNLISTEDDAPPIES", payload: unlistedDappies });
-    } catch (err) {
       dispatch({ type: "ERROR" });
     }
   };
