@@ -1,12 +1,7 @@
-import { useReducer, useState, useEffect } from "react";
+import { useReducer, useEffect } from "react";
 import { marketReducer } from "../reducer/marketReducer";
 import DappyClass from "../utils/DappyClass";
-import axios from "axios";
-import { GET_DAPPYIDS_TO_LISTINGIDS } from "../flow/market/dappyIDs-to-listingIDs.script";
-import { sortDappies } from "../utils/sortDappies.utils";
 import { generateDappies } from "../utils/dappies.utils";
-
-import { query } from "@onflow/fcl";
 
 export default function useMarket() {
   const [marketState, dispatch] = useReducer(marketReducer, {
