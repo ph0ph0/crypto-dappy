@@ -11,13 +11,15 @@ import { useUser } from '../providers/UserProvider';
 import { useAuth } from '../providers/AuthProvider';
 import { usePolling } from "../hooks/use-polling.hook";
 
+import { generateDappies } from "../utils/dappies.utils";
+
 
 
 
 export default function Market() {
 
-  const { loading, userDappies, fetchUserDappies } = useUser();
-  const { user } = useAuth();
+  // const { loading, userDappies, fetchUserDappies } = useUser();
+  // const { user } = useAuth();
 
   const {
     loadingMarketDappies,
@@ -25,23 +27,11 @@ export default function Market() {
     error,
     marketDappies,
     unlistedDappies,
-    updateMarket,
   } = useMarket();
 
-  const loadMarket= async () => {
-    console.log(`!!!!!!!Loading market!!!!!!!`)
-    if (!loading) {
-      await updateMarket(user, userDappies)
-    }
-  }
+  const { userDappies, loading } = useUser();
 
-  useEffect(() => {
-    loadMarket()
-    //eslint-disable-next-line
-  }, [loading]);
-
-
-  usePolling(fetchUserDappies, 6000)
+  // usePolling(fetchUserDappies, 6000)
 
   return (
     <>
@@ -59,13 +49,13 @@ export default function Market() {
         }
       />
       <h4 className="app__subheader">Your Unlisted Dappies</h4>
-      <ErrorLoadingRenderer loading={loadingUnlistedDappies} error={error}>
-        <DappyList dappies={unlistedDappies} market />
+      <ErrorLoadingRenderer loading={loading} error={error}>
+        <DappyList dappies={marketDappies} market />
       </ErrorLoadingRenderer>
       <hr className="app__hr"></hr>
       <h4 className="app__subheader">Dappies on the Market</h4>
-      <ErrorLoadingRenderer loading={loadingMarketDappies} error={error}>
-        <DappyList dappies={marketDappies} listed market />
+      <ErrorLoadingRenderer loading={loading} error={error}>
+        <DappyList dappies={unlistedDappies} listed market />
       </ErrorLoadingRenderer>
     </>
   );
