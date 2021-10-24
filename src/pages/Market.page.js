@@ -8,9 +8,6 @@ import useMarket from "../hooks/use-market.hook"
 
 import { useUser } from '../providers/UserProvider';
 
-
-
-
 export default function Market() {
 
   const {

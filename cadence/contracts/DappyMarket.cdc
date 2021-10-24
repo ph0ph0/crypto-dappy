@@ -6,35 +6,35 @@ import FungibleToken from 0x9a0766d93b6608b7
 // A sale support contract for Dappies, based on the Official Flow NFTStorefront contract (https://github.com/onflow/nft-storefront).
 // The NFTStorefront contract has also been included in this folder for reference.
 // For another example of a modified NFTStorefront contract, see (https://github.com/versus-flow/versus-contracts/blob/main/contracts/Marketplace.cdc)
-// 
+//
 // Each account that wants to list Dappies for sale installs a Storefront,
 // and lists individual sales within that Storefront as Listings.
 // There is one Storefront per account, it handles sales of Dappies
 // for that account.
 
 // Note that a Listing is a representation of the Dappy, and not the actual
-// Dappy resource itself. 
+// Dappy resource itself.
 //
 // Each Listing can have one or more "cuts" of the sale price that
 // goes to one or more addresses. Cuts can be used to pay listing fees
 // or other considerations.
 // Unlike the NFTStorefront contract, each Dappy (equivalent to an NFT)
 //  can only be associated with one Listing (1 Listing per Dappy).
-// 
+//
 // The CryptoDappies application populates the Market page by employing an
-// AWS serverless tech stack. For more information, see here: 
+// AWS serverless tech stack. For more information, see here:
 // (https://github.com/ph0ph0/FlowEventMonitor)
-// 
+//
 // Marketplaces and other aggregators can watch for DappyListing events
 // and list Dappies of interest.
 //
 // In order to enhance this contract as a learning aid, here are the differences
 // between the DappyMarket contract and the NFTStorefront contract:
-// - The DappyContract.cdc does not employ the NonfungibleToken standard 
-//   (https://github.com/onflow/flow-nft/blob/master/contracts/NonFungibleToken.cdc). 
+// - The DappyContract.cdc does not employ the NonfungibleToken standard
+//   (https://github.com/onflow/flow-nft/blob/master/contracts/NonFungibleToken.cdc).
 //   As such, it does not have access to the restricted types of the NFT standard contract,
 //   and so all restricted types are those found in the DappyContract.
-//   For example, in the NFTStorefront contract, on line 207, the `nftProviderCapability` 
+//   For example, in the NFTStorefront contract, on line 207, the `nftProviderCapability`
 //   constant has a restricted type of {NonFungibleToken.Provider, NonFungibleToken.CollectionPublic}.
 //   The equivalent in the DappyMarket contract is {DappyContract.Provider, DappyContract.CollectionPublic}.
 // - Where approporiate, the term 'NFT' was replaced with 'Dappy'.
@@ -456,7 +456,7 @@ pub contract DappyMarket {
         // The dictionary of Listing uuids to Listing resources.
         access(self) var listings: @{UInt64: DappyListing}
         
-        // Dictionary matching DappyIDs that have been listed to their ListingIDs
+        // Dictionary matching DappyIDs that have been listed to their ListingIDs {DappyID: ListingID}
         access(self) var dappyIDsToListingIDs: {UInt64: UInt64}
 
         // insert

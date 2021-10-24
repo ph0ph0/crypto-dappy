@@ -23,11 +23,11 @@ export default function useMarketDappy(fetchUserDappies) {
     console.log(`list dappy`)
   };
 
-  const removeDappyFromMarket = async (listingResourceID) => {
+  const removeDappyFromMarket = async () => {
    console.log(`remove dappy`)
   };
 
-  const buyDappyOnMarket = async (listingResourceID, storefrontAddress) => {
+  const buyDappyOnMarket = async () => {
     console.log(`buy dappy`)
   };
 
