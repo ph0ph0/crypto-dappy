@@ -32,7 +32,7 @@ export const BUY_DAPPY_ON_MARKET = `
         }
 
         execute {
-            let <- self.listingRef.purchase(payment: <- self.paymentVault)
+            let dappy <- self.listingRef.purchase(payment: <- self.paymentVault)
             self.collectionRef.deposit(token: <- dappy)
 
             self.storefrontRef.cleanup(listingResourceID: listingResourceID)
