@@ -55,7 +55,7 @@ export default function useMarketDappy(fetchUserDappies) {
       setListingPrice("")
       console.log("Success!")
       dispatch({type: "SUCCESS"})
-      // update the market
+      fetchUserDappies()
     } catch(error) {
       console.log(`Error: ${error}`)
       dispatch({type: "ERROR"})
