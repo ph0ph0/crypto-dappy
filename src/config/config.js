@@ -6,4 +6,5 @@ config({
   "0xFungibleToken": process.env.REACT_APP_FT_CONTRACT,
   "0xFUSD": process.env.REACT_APP_FUSD_CONTRACT,
   "0xDappy": process.env.REACT_APP_DAPPY_CONTRACT,
+  "decoder.Type": (val) => val.staticType,
 });
