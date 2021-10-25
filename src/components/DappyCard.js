@@ -23,7 +23,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
 
   const RemoveFromMarketButton = () => (
     <div
-      onClick={() => removeDappyFromMarket()}
+      onClick={() => removeDappyFromMarket(listingResourceID)}
       className='btn btn-bordered btn-light btn-dappy'>
       <i className='ri-close-line btn-icon'></i>REMOVE
     </div>

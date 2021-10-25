@@ -35,7 +35,7 @@ export default function Market() {
     // eslint-disable-next-line
   }, [loading])
 
-  usePolling(fetchUserDappies, 6000)
+  // usePolling(fetchUserDappies, 6000)
 
 
   return (

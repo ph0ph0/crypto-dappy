@@ -3,6 +3,7 @@ import { useReducer, useState } from "react";
 import { marketDappyReducer } from "../reducer/marketDappyReducer";
 
 import { LIST_DAPPY_ON_MARKET } from "../flow/market/list-dappy-on-market.tx";
+import { REMOVE_DAPPY_FROM_MARKET } from "../flow/market/remove-dappy-from-market.tx";
 import { useTxs } from "../providers/TxProvider";
 
 export default function useMarketDappy(fetchUserDappies) {
@@ -62,8 +63,25 @@ export default function useMarketDappy(fetchUserDappies) {
     }
   };
 
-  const removeDappyFromMarket = async () => {
+  const removeDappyFromMarket = async (listingResourceID) => {
    console.log(`remove dappy`)
+   if (listingResourceID === 0) return;
+   dispatch({type: "LOADING"})
+   try {
+     let res = await mutate({
+       cadence: REMOVE_DAPPY_FROM_MARKET,
+       limit: 300,
+       args: (arg, t) => [arg(listingResourceID, t.UInt64)]
+     })
+     addTx(res)
+     await tx(res).onceSealed()
+     console.log(`Success!`)
+     dispatch({type: "SUCCESS"})
+     fetchUserDappies()
+   } catch (error) {
+     console.log(`Error: ${error}`)
+     dispatch({type: "ERROR"})
+   }
   };
 
   const buyDappyOnMarket = async () => {
