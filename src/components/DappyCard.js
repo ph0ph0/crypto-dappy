@@ -31,7 +31,7 @@ export default function DappyCard({ dappy, store, designer, listed, market}) {
 
   const BuyFromMarketButton = () => (
     <div
-      onClick={() => buyDappyOnMarket()}
+      onClick={() => buyDappyOnMarket(listingResourceID, storefrontAddress)}
       className='btn btn-bordered btn-light btn-dappy'>
       <i className='ri-store-2-line btn-icon'></i>
       {parseInt(price)} FUSD
