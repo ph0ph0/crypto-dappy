@@ -6,11 +6,13 @@ export const GET_DAPPYIDS_TO_LISTINGIDS = `
 
         let account = getAccount(addr)
 
-        let ref = account.getCapability<&{DappyMarket.StorefrontPublic}>(DappyMarket.StorefrontPublicPath).borrow()
-            ?? panic("Couldn't borrow the public storefront")
-        let dappyDict = ref.getDappyToListingIDs()
-        return dappyDict
-
+        if (account.getCapability<&{DappyMarket.StorefrontPublic}>(DappyMarket.StorefrontPublicPath).check() != false) {
+            let ref = account.getCapability<&{DappyMarket.StorefrontPublic}>(DappyMarket.StorefrontPublicPath).borrow()
+                ?? panic("Couldn't borrow the public storefront")
+            let dappyDict = ref.getDappyToListingIDs()
+            return dappyDict
+        }
+        return {}
     }
 
 `
