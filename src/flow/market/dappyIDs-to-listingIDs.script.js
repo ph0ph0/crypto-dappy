@@ -1,16 +1,18 @@
 export const GET_DAPPYIDS_TO_LISTINGIDS = `
-// Returns a dictionary mapping DappyIDsToListingIDs that the user owns.
 
-import DappyMarket from 0xDappy
+    import DappyMarket from 0xDappy
 
+    pub fun main(addr: Address): {UInt64: UInt64} {
 
-pub fun main(addr: Address): {UInt64: UInt64} {
-    let account = getAccount(addr)
+        let account = getAccount(addr)
 
-    let ref = account.getCapability<&{DappyMarket.StorefrontPublic}>(DappyMarket.StorefrontPublicPath).borrow()
-        ?? panic("Couldn't borrow public storefront")
-    let dappyDict = ref.getDappyToListingIDs()
-    return dappyDict
-}
+        if (account.getCapability<&{DappyMarket.StorefrontPublic}>(DappyMarket.StorefrontPublicPath).check() != false) {
+            let ref = account.getCapability<&{DappyMarket.StorefrontPublic}>(DappyMarket.StorefrontPublicPath).borrow()
+                ?? panic("Couldn't borrow the public storefront")
+            let dappyDict = ref.getDappyToListingIDs()
+            return dappyDict
+        }
+        return {}
+    }
 
 `
