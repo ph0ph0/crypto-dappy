@@ -58,7 +58,6 @@ export const createRandomDappies = (number = 1, options) => {
   let dappies = [];
   let { customRarity, theme, baseColor, fullRandom = false } = options
   for (let i = 0; i < number; i++) {
-    console.log(i)
     let rarity = customRarity || DAPPY_RARITY_DISTRIBUTION[createRandomNumber(DAPPY_RARITY_DISTRIBUTION.length)]
     let newborn = {
       name: `${faker.name.firstName()} Dappy`,

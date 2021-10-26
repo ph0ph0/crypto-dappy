@@ -11,7 +11,7 @@ Here are some useful CLI commands for testing the CryptoDappy app
 * **_Admin Only_** params -  dna: String, name: String
 
 3. flow scripts execute ./cadence/scripts/ListUserDappies.cdc {address} --network testnet
-* params -  address: Address    
+* params -  address: Address
 
 ## Market
 

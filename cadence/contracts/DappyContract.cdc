@@ -1,4 +1,4 @@
-import FungibleToken from "./FungibleToken.cdc"
+import FungibleToken from 0x9a0766d93b6608b7
 
 pub contract DappyContract {
   access(self) var templates: {UInt32: Template}
@@ -22,7 +22,7 @@ pub contract DappyContract {
       self.templateID = templateID
       self.dna = dna
       self.name = name
-      self.price = self._calculatePrice(dna: dna.length)
+      self.price = 0.1
     }
 
     access(self) fun _calculatePrice(dna: Int): UFix64 {
