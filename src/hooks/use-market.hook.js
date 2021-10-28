@@ -42,7 +42,7 @@ export default function useMarket() {
 
   const queryBackend = async () => {
     try{
-      const res = await axios.get("https://1c4mgqsjt2.execute-api.us-east-1.amazonaws.com/test")
+      const res = await axios.get("https://ici59swudi.execute-api.us-east-1.amazonaws.com/test/marketplace")
       console.log(`API response: ${JSON.stringify(res.data.body.Items)}`)
       return res?.data?.body?.Items
     } catch(error) {

@@ -48,7 +48,7 @@ export default function Market() {
         }
         subtitle={
           <>
-            Buy <span className="highlight">dappies</span> on the market andlist
+            Buy <span className="highlight">dappies</span> on the market and list
             your own!
           </>
         }

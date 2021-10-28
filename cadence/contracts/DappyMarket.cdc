@@ -1,4 +1,4 @@
-import DappyContract from 0x29e893174dd9b963
+import DappyContract from 0x3045a3c468a9894d
 import FungibleToken from 0x9a0766d93b6608b7
 
 // DappyMarket
